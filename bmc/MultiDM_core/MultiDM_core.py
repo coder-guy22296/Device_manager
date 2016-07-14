@@ -36,6 +36,7 @@ class Control(inLib.Device):
 
         #below is added by Dan 
         # have a stack of zernike modes 
+        self.pool = {}
         self.multi_list = []
         self.zen_list = []
         self.z_store = 0
@@ -150,6 +151,8 @@ class Control(inLib.Device):
 
     def returnPattern(self):
         return self.mirror.pattern
+        #But how is this pattern update from addOther?
+        
 
     def clear(self):
         self.mirror.clear()
@@ -221,13 +224,17 @@ class Control(inLib.Device):
     def applyToMirror(self):
         #First save mirror
         self.mirror.outputSegs(self.tempfilename)
-
         #Wait to make sure file exists
         time.sleep(0.5)
-
         #Run executable
         subprocess.call([self.executable, self.tempfilename, str(self.multiplier),
                          "1", "-1"], shell=True)
+                         
+    def addOther(self, MOD):
+        # Update by Dan on 07/14. 
+                         
+                         
+                
         
 
 class Mirror():
@@ -372,6 +379,14 @@ class Mirror():
 
     def useSegements(self,segs):
         self.segOffsets = segs.copy()
+
+class Modulation_pool():
+# Modulation pool added     
+    
+    self.multi_list = []
+    self.zen_list = []
+    self.z_store = 0
+
 
 
         

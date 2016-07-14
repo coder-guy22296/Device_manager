@@ -446,6 +446,7 @@ class Ui_Form(object):
         self.verticalLayoutModulations.setObjectName(_fromUtf8("verticalLayoutModulations"))
         spacerItem1 = QtGui.QSpacerItem(20, 317, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayoutModulations.addItem(spacerItem1)
+        # This is where the "set" updates the mirror pattern        
         self.pushButton_setMods = QtGui.QPushButton(self.groupBoxModulations)
         self.pushButton_setMods.setText(QtGui.QApplication.translate("Form", "Set", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton_setMods.setObjectName(_fromUtf8("pushButton_setMods"))

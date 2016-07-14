@@ -9,14 +9,12 @@ import pupil_forInControl as pupil
 from scipy.ndimage import interpolation
 from scipy.ndimage import gaussian_filter as gf
 from scipy import optimize
-import copy
 import os
 import time
 import matplotlib.pyplot as plt
 import libtim
 import libtim.zern
 import signalForAO
-import skimage
 from skimage.restoration import unwrap_phase
 
 
@@ -70,6 +68,7 @@ class Control(inLib.Module):
         return geometry
 
     def _addMOD(self, MOD):
+        # edited by Dan on 07/14
         if self.hasSLM:
             index = self._control.slm.addOther(MOD)
             return index

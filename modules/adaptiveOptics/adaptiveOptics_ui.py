@@ -52,9 +52,9 @@ class UI(inLib.ModuleUI):
 
         self._ui.spinBox_zernModesToFit.setValue(self._control.zernModesToFit)
         self._ui.spinBox_zernModesToFit.valueChanged.connect(self.setZernModesToFit)
-
         self._ui.lineEdit_diffLimit.returnPressed.connect(self.setDiffLimit)
-
+        
+        # 07/14: this is how the modulation is set to the mirror.        
         self._ui.pushButton_setMods.clicked.connect(self.set_modulations)
 
         self._ui.pushButton_setZernRadius.clicked.connect(self._setZernikeRadius)
@@ -288,7 +288,7 @@ class UI(inLib.ModuleUI):
             self._displayPhase(PF)
         self.use_zernike = False 
 
-
+    # This is connection from the button "Modulate"
     def modulate(self):
         modulation = Modulation(len(self._modulations), self)
         self._ui.verticalLayoutModulations.insertWidget(0, modulation.checkbox)
