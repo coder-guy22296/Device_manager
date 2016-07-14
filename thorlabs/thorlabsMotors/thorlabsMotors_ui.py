@@ -13,10 +13,14 @@ class UI(inLib.DeviceUI):
         inLib.DeviceUI.__init__(self, control, design_path)
 
         #self.homeX, self.homeY, z = self._control.position()
-
+        self.sup = 61
+        self.sdown = 31
         self._ui.lineEdit_pos.returnPressed.connect(self._move)
+        self._ui.lineEdit_scaninit.returnPressed.connect(self._scaninit)
         self._ui.pushButtonUp.clicked.connect(self._stepUp)
         self._ui.pushButtonDown.clicked.connect(self._stepDown)
+        self._ui.pushButtonBL.clicked.connect(self._BLcorrect)
+        self.scan_0 = 5.00
         #self._ui.pushButtonHomeXY.clicked.connect(self._moveHomeXY)
 
         #self._ui.updateInfo_checkBox.stateChanged.connect(self._updateInfo)
@@ -70,9 +74,12 @@ class UI(inLib.DeviceUI):
 
     def _move(self):
         pos = float(self._ui.lineEdit_pos.text())
-        #self._control.goAbsolute(xpos, ypos)
-        #self.aptUser.moveTo(pos)
-
+        print pos
+        self._control.setStage(pos)
+#        self.aptUser.moveTo(pos)
+    def _scaninit(self):
+        self.scan_0 = float(self._ui.lineEdit_scaninit.text())
+        print("Scan starts at: %4.2f " %self.scan_0)
 
     def _stepUp(self):
         #self.aptUser.jogUp()
@@ -81,7 +88,14 @@ class UI(inLib.DeviceUI):
     def _stepDown(self):
         #self.aptUser.jogDown()
         self._control.jogDown()
-
+        
+    def _BLcorrect(self):
+#       
+        self._control.setStage(self.scan_0+0.0090)
+        time.sleep(3)
+        for ii in xrange(self.sdown+1):
+            self._control.jogDown()
+            time.sleep(0.27)
 
     '''
     def _moveHomeXY(self):

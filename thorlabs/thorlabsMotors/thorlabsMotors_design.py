@@ -17,7 +17,7 @@ except AttributeError:
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName(_fromUtf8("Form"))
-        Form.resize(406, 384)
+        Form.resize(450, 384)
         Form.setWindowTitle(QtGui.QApplication.translate("Form", "Thorlabs stage", None, QtGui.QApplication.UnicodeUTF8))
         self.verticalLayout = QtGui.QVBoxLayout(Form)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
@@ -28,6 +28,12 @@ class Ui_Form(object):
         self.label_4.setGeometry(QtCore.QRect(18, 69, 26, 16))
         self.label_4.setText(QtGui.QApplication.translate("Form", "Step:", None, QtGui.QApplication.UnicodeUTF8))
         self.label_4.setObjectName(_fromUtf8("label_4"))
+        
+        self.pushButtonBL = QtGui.QPushButton(self.groupBox)
+        self.pushButtonBL.setGeometry(QtCore.QRect(350, 60, 85, 23))
+        self.pushButtonBL.setText(QtGui.QApplication.translate("Form", "BL_correction", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButtonBL.setObjectName(_fromUtf8("pushButtonBL"))       
+        
         self.pushButtonUp = QtGui.QPushButton(self.groupBox)
         self.pushButtonUp.setGeometry(QtCore.QRect(240, 30, 75, 23))
         self.pushButtonUp.setText(QtGui.QApplication.translate("Form", "^", None, QtGui.QApplication.UnicodeUTF8))
@@ -46,8 +52,13 @@ class Ui_Form(object):
         self.doubleSpinBoxStep.setProperty("value", 1.0)
         self.doubleSpinBoxStep.setObjectName(_fromUtf8("doubleSpinBoxStep"))
         self.lineEdit_pos = QtGui.QLineEdit(self.groupBox)
-        self.lineEdit_pos.setGeometry(QtCore.QRect(42, 23, 133, 20))
+        self.lineEdit_pos.setGeometry(QtCore.QRect(35, 23, 80, 20))
         self.lineEdit_pos.setObjectName(_fromUtf8("lineEdit_pos"))
+        self.lineEdit_scaninit = QtGui.QLineEdit(self.groupBox)
+        self.lineEdit_scaninit.setGeometry(QtCore.QRect(125, 23, 80, 20))
+        self.lineEdit_scaninit.setObjectName(_fromUtf8("lineEdit_scaninit"))
+        
+        
         self.verticalLayout.addWidget(self.groupBox)
         self.groupBox_3 = QtGui.QGroupBox(Form)
         self.groupBox_3.setTitle(QtGui.QApplication.translate("Form", "Information", None, QtGui.QApplication.UnicodeUTF8))

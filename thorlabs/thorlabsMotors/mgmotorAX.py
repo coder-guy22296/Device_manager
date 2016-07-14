@@ -50,12 +50,12 @@ if __name__ == "__main__":
     aptUser2 = APTUser2()
     #aptUser2.show()
 
-    time.sleep(5)
+    time.sleep(4)
 
     aptUser2.moveTo(60)
-    time.sleep(4)
+    time.sleep(3)
     aptUser2.moveTo(120)
-    time.sleep(4)
+    time.sleep(3)
     
     sys.exit(app.exec_())
 

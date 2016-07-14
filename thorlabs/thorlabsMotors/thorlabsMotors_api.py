@@ -22,8 +22,9 @@ class API():
         self.servo.show()
 
     def setStage(self, pos):
-        pass
-        #self.stage.moveTo(pos)
+#        pass
+        self.servo.moveTo(pos)
+#        self.servo.show()
 
     def jogUp(self):
         self.servo.jogUp()

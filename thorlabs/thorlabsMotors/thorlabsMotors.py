@@ -9,7 +9,7 @@ class Control(inLib.Device):
         inLib.Device.__init__(self, 'thorlabs.thorlabsMotors.thorlabsMotors_api', settings)
 
     def initServo(self):
-        self._api.initServo()
+         self._api.initServo()
 
     def jogUp(self):
         self._api.jogUp()
@@ -19,7 +19,7 @@ class Control(inLib.Device):
 
 
     def setStage(self, pos):
-        self._api.stage.moveTo(pos)
+        self._api.setStage(pos)
 
     def shutDown(self):
         self._api.shutDown()
