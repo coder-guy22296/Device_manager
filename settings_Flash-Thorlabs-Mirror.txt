@@ -1,0 +1,185 @@
+machine: Sequoia
+working_dir: D:\Data\Dan
+devices:
+    syringePumps:
+        manufacturer: harvardapparatus
+        model: pump
+        active: false
+        settings:
+            port: COM3
+
+    mirror:
+        active: true
+        manufacturer: bmc
+        model: MultiDM
+        settings:
+            pixels: 512
+            segments: 12
+            executable: D:/Ryan/BMC_Mirror/UsbExMulti/Win32/Release/UsbExMulti.exe
+
+    slm:
+        active: false
+        manufacturer: boulderNonlinear
+        model: xySeries_PCIe
+        settings:
+            cx: 275.0
+            cy: 270.0
+            d: 417.0
+            lut_file: C:/BLINK_PCIe/LUT_Files/newlut.lut
+            n_pixels: 512
+            response_time: 0.0052
+            sli_settings:
+                NA: 0.8
+                dmf: 0.0
+                f: 5000
+                l: 0.68
+                n: 1.33
+                tilt: !!python/tuple [0.0, 0.0]
+                z0: 1.6
+            wait_time: 0.0104
+
+    shutters:
+        manufacturer: nationalInstruments
+        model: DAQ
+        active: false
+        settings:
+            channels: 5
+            board: "PCIe-6353"
+            analogoutput0: 9.0
+            analogoutput1: 1.0
+            oversampling: 100
+            frames: 3
+            channel_settings:
+                3:
+                    power: 1.0
+                    ch_on: 0.0
+                    ch_off: 1.0
+                2:
+                    power: 1.0
+                    ch_on: 0.0
+                    ch_off: 1.0
+                1:
+                    power: 1.0
+                    ch_on: 1.0
+                    ch_off: 2.0
+                0:
+                    power: 1.0
+                    ch_on: 0.0
+                    ch_off: 1.0
+
+               
+    lasers:
+        manufacturer: coherent
+        model: obis
+        active: false
+        settings:
+            ports: ["COM15","COM14","COM13"] #com15:405; com13:647; com14:488
+            lines: [405, 488, 647]
+    camera:
+        manufacturer: hamamatsu
+        model: orcaflash
+        active: true
+        settings:
+            temperature: 20
+            exposure_time: 0.4        # in milliseconds
+            delay_time: 50           # in milliseconds
+            ad_channel: 0
+            #roi: [1,256,1,256]
+            roi: [920,1176,860,1116]
+            binning: [1,1]
+    ccd:
+        manufacturer: imagingSource
+        model: ccd
+        active: false
+        settings:
+            exposure_time: 10              #in ms
+            dimensions: [768,768]
+            roi: [0,0]
+    hal4000:
+        manufacturer: zhuangLab
+        model: hal4000
+        active: false
+        settings: null
+    motorizer:
+        manufacturer: huangLab
+        model: motorizer
+        active: false
+        settings:
+            ODs: [0, 0.5, 1, 2, 3, 4]
+    stage:
+        manufacturer: marzhauser
+        model: stage
+        active: false
+        settings:
+            step: 1.0
+    servo:
+        manufacturer: thorlabs
+        model: thorlabsMotors
+        active: true
+        settings:
+            step: 0.0004
+    piezo:
+        manufacturer: madCityLabs
+        model: nanodrive
+        active: false
+        settings:
+            n_axis: 1              # The number of axis
+            response_time: 0.1      # See below for explanation:
+            precision: 0.01         # After a move cmd, the position is probed every
+                                    # 'response_time' secs, until the std of the last 5
+                                    # position is below the 'precision'.
+ 
+    
+modules:
+    activationLED:
+        active: false
+        settings:
+            blah: 1000
+    STORMimaging:
+        active: false
+        settings:
+            blah: 1000
+    focusLock:
+        active: false
+        settings:
+            samples: 1000
+            sampleRate: 10000
+    imageBasedFocusLock:
+        active: false
+        settings:
+            xyFitRegion: 10
+            target: 50
+            below: 49.3
+            above: 50.7
+            rollingAv: 20
+            initialFrames: 30
+            unactiveUntil: 10
+            frames: 500
+            normalize: true
+            centroid: false
+    illumination:
+        active: false
+        settings: null
+    testing:
+        active: false
+        settings: null
+    adaptiveOptics:
+        active: true
+        settings: {filename: psfm01.npy, nFrames: 2, nIterations: 4, nSlices: 31, range: 9.0, hasSLM: false, hasMirror: true}
+    piezoscan:
+        active: true
+        settings: 
+            ThorlabsMotor: true
+    scripts:
+        active: false
+        settings: null
+    sliscan:
+        active: false
+        settings: null
+    hotSpots:
+        active: false
+        settings:
+            # List all relevant devices and provide the functions
+            # to probe and set the positon:
+            hal4000: [getStagePosition, moveTo] 
+            scope: [PFS.getPosition, PFS.MoveAbsolute]

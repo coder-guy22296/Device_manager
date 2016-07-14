@@ -1,0 +1,903 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>781</width>
+    <height>617</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>16777215</width>
+    <height>16777215</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Deformable Mirror</string>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <item>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>Pattern</string>
+     </property>
+     <layout class="QFormLayout" name="formLayout">
+      <item row="7" column="0">
+       <widget class="QPushButton" name="pushButton_rot90">
+        <property name="text">
+         <string>Rotate 90</string>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="0">
+       <widget class="QPushButton" name="pushButton_fliplr">
+        <property name="text">
+         <string>Flip L-R</string>
+        </property>
+       </widget>
+      </item>
+      <item row="10" column="0">
+       <widget class="QPushButton" name="pushButton_rotate">
+        <property name="text">
+         <string>Rotate</string>
+        </property>
+       </widget>
+      </item>
+      <item row="10" column="1">
+       <widget class="QLineEdit" name="lineEdit_rotate"/>
+      </item>
+      <item row="11" column="0">
+       <widget class="QPushButton" name="pushButton_pad">
+        <property name="text">
+         <string>Pad Zeros</string>
+        </property>
+       </widget>
+      </item>
+      <item row="11" column="1">
+       <widget class="QLineEdit" name="lineEdit_pad"/>
+      </item>
+      <item row="14" column="0" colspan="2">
+       <widget class="QPushButton" name="pushButton_getSegs">
+        <property name="text">
+         <string>Calculate Segments</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QPushButton" name="pushButton_load">
+        <property name="text">
+         <string>Load</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLineEdit" name="lineEdit_loadMult"/>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Center x:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Center y:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QLineEdit" name="lineEdit_cx"/>
+      </item>
+      <item row="4" column="1">
+       <widget class="QLineEdit" name="lineEdit_cy"/>
+      </item>
+      <item row="5" column="0">
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>Number of pxls:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <widget class="QLineEdit" name="lineEdit_npixels"/>
+      </item>
+      <item row="6" column="0" colspan="2">
+       <widget class="QPushButton" name="pushButton_reconfig">
+        <property name="text">
+         <string>Reconfig Geometry</string>
+        </property>
+       </widget>
+      </item>
+      <item row="16" column="0">
+       <widget class="QPushButton" name="pushButton_mult">
+        <property name="text">
+         <string>Multiplier</string>
+        </property>
+       </widget>
+      </item>
+      <item row="16" column="1">
+       <widget class="QLineEdit" name="lineEdit_mult"/>
+      </item>
+      <item row="17" column="0" colspan="2">
+       <widget class="QGroupBox" name="groupBox_2">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>50</height>
+         </size>
+        </property>
+        <property name="title">
+         <string>Poke One Segment</string>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_2">
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_4">
+           <property name="text">
+            <string>Segment</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLabel" name="label_5">
+           <property name="text">
+            <string>Addition</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QSpinBox" name="spinBox_segment">
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="maximum">
+            <number>144</number>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLineEdit" name="lineEdit_pokeval">
+           <property name="maximumSize">
+            <size>
+             <width>50</width>
+             <height>16777215</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="2">
+          <widget class="QPushButton" name="pushButton_poke">
+           <property name="maximumSize">
+            <size>
+             <width>40</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Set</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QCheckBox" name="checkBox_pokeAll">
+           <property name="text">
+            <string>All </string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="18" column="0" colspan="2">
+       <widget class="QPushButton" name="pushButton_toMirror">
+        <property name="text">
+         <string>Apply to Mirror</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QPushButton" name="pushButton_clear">
+        <property name="text">
+         <string>Clear</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QPushButton" name="pushButton_refresh">
+        <property name="text">
+         <string>Refresh</string>
+        </property>
+       </widget>
+      </item>
+      <item row="15" column="0">
+       <widget class="QPushButton" name="pushButton_premult">
+        <property name="text">
+         <string>Pre Multiplier</string>
+        </property>
+       </widget>
+      </item>
+      <item row="15" column="1">
+       <widget class="QLineEdit" name="lineEdit_premult"/>
+      </item>
+      <item row="8" column="1">
+       <widget class="QPushButton" name="pushButton_flipud">
+        <property name="text">
+         <string>Flip U-D</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QPushButton" name="pushButton_loadSegs">
+        <property name="text">
+         <string>Load Segs</string>
+        </property>
+       </widget>
+      </item>
+      <item row="12" column="1">
+       <widget class="QCheckBox" name="checkBox_alwayspad">
+        <property name="text">
+         <string>Always pad?</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QTabWidget" name="tabWidgetPF">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="currentIndex">
+      <number>3</number>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>15</width>
+       <height>16</height>
+      </size>
+     </property>
+     <widget class="QWidget" name="tabWidgetPFPage1">
+      <attribute name="title">
+       <string>Pattern</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="MatplotlibWidget" name="mplwidgetPhase"/>
+       </item>
+       <item>
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="1" column="1">
+          <widget class="QPushButton" name="pushButton_Save">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Save to file</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="3">
+          <widget class="QPushButton" name="pushButton_Modulate">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Modulate</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QPushButton" name="pushButton_Load">
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Fit to Zernike</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_4">
+      <attribute name="title">
+       <string>Segment</string>
+      </attribute>
+      <widget class="MatplotlibWidget" name="mplwidgetSegs">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>371</width>
+         <height>371</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_meanSeg">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>410</y>
+         <width>121</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Mean: --</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_maxSeg">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>440</y>
+         <width>121</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Maximum: --</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_minSeg">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>470</y>
+         <width>141</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Minimum: --</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>Running Sharpness</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="MatplotlibWidget" name="mplwidgetSharpness2"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_2">
+      <attribute name="title">
+       <string>Zernikes</string>
+      </attribute>
+      <widget class="MatplotlibWidget" name="mplwidgetZern">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>0</y>
+         <width>380</width>
+         <height>349</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pushButton_modulateZernike">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>350</y>
+         <width>75</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Modulate</string>
+       </property>
+      </widget>
+      <widget class="QGroupBox" name="groupBox_3">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>370</y>
+         <width>391</width>
+         <height>151</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>Add Zernike</string>
+       </property>
+       <widget class="QLabel" name="label_6">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>48</y>
+          <width>30</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Mode:</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_7">
+        <property name="geometry">
+         <rect>
+          <x>121</x>
+          <y>48</y>
+          <width>51</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Amplitude:</string>
+        </property>
+       </widget>
+       <widget class="QSpinBox" name="spinBox_zernMode">
+        <property name="geometry">
+         <rect>
+          <x>52</x>
+          <y>48</y>
+          <width>63</width>
+          <height>19</height>
+         </rect>
+        </property>
+        <property name="minimum">
+         <number>1</number>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEdit_zernAmp">
+        <property name="geometry">
+         <rect>
+          <x>178</x>
+          <y>48</y>
+          <width>50</width>
+          <height>19</height>
+         </rect>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>60</width>
+          <height>16777215</height>
+         </size>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="checkBox_zernMask">
+        <property name="geometry">
+         <rect>
+          <x>234</x>
+          <y>49</y>
+          <width>47</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Mask</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pushButton_applyZern">
+        <property name="geometry">
+         <rect>
+          <x>289</x>
+          <y>48</y>
+          <width>86</width>
+          <height>19</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Apply</string>
+        </property>
+       </widget>
+       <widget class="QSpinBox" name="spinBox_numZerns">
+        <property name="geometry">
+         <rect>
+          <x>52</x>
+          <y>73</y>
+          <width>63</width>
+          <height>19</height>
+         </rect>
+        </property>
+        <property name="minimum">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <number>999</number>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_8">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>73</y>
+          <width>25</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Num:</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_9">
+        <property name="geometry">
+         <rect>
+          <x>121</x>
+          <y>73</y>
+          <width>44</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Min Amp:</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_10">
+        <property name="geometry">
+         <rect>
+          <x>121</x>
+          <y>98</y>
+          <width>48</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Max Amp:</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEdit_minZAmp">
+        <property name="geometry">
+         <rect>
+          <x>178</x>
+          <y>73</y>
+          <width>50</width>
+          <height>19</height>
+         </rect>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>60</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>-1</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEdit_maxZAmp">
+        <property name="geometry">
+         <rect>
+          <x>178</x>
+          <y>98</y>
+          <width>50</width>
+          <height>19</height>
+         </rect>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>60</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>1</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_11">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>98</y>
+          <width>26</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Wait:</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEdit_wTime">
+        <property name="geometry">
+         <rect>
+          <x>52</x>
+          <y>98</y>
+          <width>63</width>
+          <height>19</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>-1</string>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="checkBox_zernWithSharpness">
+        <property name="geometry">
+         <rect>
+          <x>234</x>
+          <y>74</y>
+          <width>141</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>With running sharpness?</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_14">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>23</y>
+          <width>36</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Radius:</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEdit_zernRad">
+        <property name="geometry">
+         <rect>
+          <x>52</x>
+          <y>23</y>
+          <width>63</width>
+          <height>19</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>256</string>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="checkBox_clearFirst">
+        <property name="geometry">
+         <rect>
+          <x>234</x>
+          <y>99</y>
+          <width>75</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Clear first?</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pushButton_toMirrorManyZerns">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>120</y>
+          <width>131</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Run Many Zerns</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pushButton_toMirrorManyZernRadii">
+        <property name="geometry">
+         <rect>
+          <x>150</x>
+          <y>120</y>
+          <width>131</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Run Many Vary Radius</string>
+        </property>
+       </widget>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="tab_3">
+      <attribute name="title">
+       <string>GroupSegs</string>
+      </attribute>
+      <widget class="MatplotlibWidget" name="mplwidgetGrouped">
+       <property name="geometry">
+        <rect>
+         <x>-10</x>
+         <y>0</y>
+         <width>380</width>
+         <height>349</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_12">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>360</y>
+         <width>291</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Enter segments to group together (comma separated):</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="lineEdit_group">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>380</y>
+         <width>351</width>
+         <height>20</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pushButton_createGroup">
+       <property name="geometry">
+        <rect>
+         <x>14</x>
+         <y>410</y>
+         <width>121</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Create Group</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="lineEdit_groupVal">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>450</y>
+         <width>81</width>
+         <height>20</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pushButton_setToGroup">
+       <property name="geometry">
+        <rect>
+         <x>100</x>
+         <y>450</y>
+         <width>121</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Add value to group</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pushButton_toMirrorGroupVary">
+       <property name="geometry">
+        <rect>
+         <x>100</x>
+         <y>480</y>
+         <width>121</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Vary Group</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_13">
+       <property name="geometry">
+        <rect>
+         <x>230</x>
+         <y>480</y>
+         <width>141</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Use params in previous tab</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="tab_5">
+      <attribute name="title">
+       <string>2x2</string>
+      </attribute>
+      <widget class="MatplotlibWidget" name="mplwidget2x2">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>380</width>
+         <height>349</height>
+        </rect>
+       </property>
+      </widget>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBoxModulations">
+     <property name="title">
+      <string>Modulations</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayoutModulations">
+      <item>
+       <spacer name="verticalSpacer_4">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>317</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_loadvaryfile">
+        <property name="text">
+         <string>Load file of patterns</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_filenameloaded">
+        <property name="text">
+         <string>--</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_varyfile">
+        <property name="text">
+         <string>Vary from file</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_varyMult">
+        <property name="text">
+         <string>Vary Multiplier</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>MatplotlibWidget</class>
+   <extends>QWidget</extends>
+   <header>matplotlibwidget</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
