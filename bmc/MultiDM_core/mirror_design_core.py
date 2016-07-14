@@ -162,6 +162,8 @@ class Ui_Form(object):
         self.pushButton_clear.setText(QtGui.QApplication.translate("Form", "Clear", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton_clear.setObjectName(_fromUtf8("pushButton_clear"))
         self.formLayout.setWidget(0, QtGui.QFormLayout.LabelRole, self.pushButton_clear)
+        
+        # refresh button        
         self.pushButton_refresh = QtGui.QPushButton(self.groupBox)
         self.pushButton_refresh.setText(QtGui.QApplication.translate("Form", "Refresh", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton_refresh.setObjectName(_fromUtf8("pushButton_refresh"))

@@ -59,7 +59,7 @@ class UI(inLib.DeviceUI):
         
         
         
-        self._ui.pushButton_setMods.clicked.connect(self.set_modulations)
+        self._ui.pushButton_setMods.clicked.connect(self.set_modulations) # added by Dan
         self._applyToMirrorThread = None
         self._applyManyZernsThread = None
         self._applyManyZernRadiiThread = None
@@ -87,6 +87,7 @@ class UI(inLib.DeviceUI):
         self._displayPhase(self._control.returnPattern())
         self.reportGeo()
 
+    # 07/14: How is the pattern passed from adaptive optics to DM?
     def refreshPattern(self):
         self._displayPhase(self._control.returnPattern())
 
@@ -134,6 +135,7 @@ class UI(inLib.DeviceUI):
         #self._control.applyToMirror()
 
     def set_modulations(self):
+#        07/14: This should serve as "set" in the adaptive optics module
         pass
    
 
@@ -212,7 +214,13 @@ class UI(inLib.DeviceUI):
         self._ui.label_maxSeg.setText("Maximum: %.2f" % trueSegs.max())
         self._ui.label_minSeg.setText("Minimum: %.2f" % trueSegs.min())
 
-
+    
+    def modulate(self):
+        modulation = Modulation(len(self._modulations), self)
+        self._ui.verticalLayoutModulations.insertWidget(0, modulation.checkbox)
+        self._modulations.append(modulation)
+#        self._control.modulatePF(self.use_zernike)
+    
 
     def shutDown(self):
         pass
@@ -237,6 +245,7 @@ class Modulation:
         self.checkbox = QtGui.QCheckBox(str(self.index))
         self.checkbox.stateChanged.connect(ui._modulation_toggled)
         self.checkbox.toggle()
+        
 
 
 
