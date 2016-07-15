@@ -212,6 +212,11 @@ class Control(inLib.Device):
         pass
     
     
+    def setMod_status(self,index,state):
+        # this feels so awkward to handle. But let it be.
+        self.pool.z_active[index] = state
+    
+    
 class Modulation_pool(object):
     def __init__(self,z_max):
         self.multi_list = []

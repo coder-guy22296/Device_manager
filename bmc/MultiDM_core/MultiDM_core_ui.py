@@ -41,7 +41,9 @@ class UI(inLib.DeviceUI):
         self._ui.pushButton_refresh.clicked.connect(self.refreshPattern)
         self._ui.pushButton_pad.clicked.connect(self.padZeros)
         self._ui.pushButton_applyZern.clicked.connect(self.calcZernike)
-        self._ui.pushButton_modulateZernike.clicked.connect(self.modZernike)
+        
+        # This is replaced by add_zernike to modulate
+#         self._ui.pushButton_modulateZernike.clicked.connect(self.modZernike)
         self._ui.pushButton_createGroup.clicked.connect(self.createGroup)
         self._ui.pushButton_setToGroup.clicked.connect(self.setGroupVal)
 
@@ -134,7 +136,7 @@ class UI(inLib.DeviceUI):
 #        adapted from adaptiveOptics_ui
         for m in self._modulations:
             state = m.checkbox.isChecked()
-            self._control.setModulationActive(m.index, state)
+            self._control.setMod_status(m.index, state)
    
 
     def pokeSegment(self):
