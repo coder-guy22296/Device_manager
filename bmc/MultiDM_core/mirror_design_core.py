@@ -216,6 +216,8 @@ class Ui_Form(object):
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.pushButton_Modulate.sizePolicy().hasHeightForWidth())
+        
+        # 07/14 is this pushButton Modulate under Zernike tab?
         self.pushButton_Modulate.setSizePolicy(sizePolicy)
         self.pushButton_Modulate.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.pushButton_Modulate.setText(QtGui.QApplication.translate("Form", "Modulate", None, QtGui.QApplication.UnicodeUTF8))
@@ -259,9 +261,11 @@ class Ui_Form(object):
         self.mplwidgetZern = MatplotlibWidget(self.tab_2)
         self.mplwidgetZern.setGeometry(QtCore.QRect(10, 0, 380, 349))
         self.mplwidgetZern.setObjectName(_fromUtf8("mplwidgetZern"))
+        
+        # This is modulate zernike 
         self.pushButton_modulateZernike = QtGui.QPushButton(self.tab_2)
         self.pushButton_modulateZernike.setGeometry(QtCore.QRect(20, 350, 75, 23))
-        self.pushButton_modulateZernike.setText(QtGui.QApplication.translate("Form", "Modulate", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButton_modulateZernike.setText(QtGui.QApplication.translate("Form", "Add Zernike", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton_modulateZernike.setObjectName(_fromUtf8("pushButton_modulateZernike"))
         self.groupBox_3 = QtGui.QGroupBox(self.tab_2)
         self.groupBox_3.setGeometry(QtCore.QRect(10, 370, 391, 151))

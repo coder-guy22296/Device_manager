@@ -7,6 +7,7 @@ from modules.adaptiveOptics import pupil_forInControl as pupil
 import subprocess
 import scipy
 from scipy.ndimage import rotate
+from Cython.Compiler.ExprNodes import constant_value_not_set
 
 class Control(inLib.Device):
     def __init__(self, settings):
@@ -20,7 +21,6 @@ class Control(inLib.Device):
         self.dummy_mirror = Mirror(256,12)
 
         self._geometry = self.mirror.geometry
-
         self.tempfilename = 'mirrorSegs.txt'
         self.multiplier = 1.0
 
@@ -28,18 +28,15 @@ class Control(inLib.Device):
         self.zernike = None
 
         self.group = []
-
         self.padding = False
 
         self.proc = None
-        self.numZernsToVary = 100
 
         #below is added by Dan 
-        # have a stack of zernike modes 
-        self.pool = {}
-        self.multi_list = []
-        self.zen_list = []
-        self.z_store = 0
+        # have a stack of zernike modes
+        self.z_max = 25 
+        self.pool = Modulation_pool(self.z_max)
+        
 
     def getGeometry(self):
         return self._geometry
@@ -177,21 +174,6 @@ class Control(inLib.Device):
         
         return self.zernike
             
-        
-    def zernCombo(self, nselect=None):
-        if nselect is None:
-            nselect = np.arange(self.zstore)
-        # clear the pattern
-        self.mirror.clear()
-        for ns in nselect:
-            amps = self.zen_list[ns]*self.multi_list[ns]
-            self.mirror.pattern += self.calcZernike_multi(amps)
-            
-        # the negative multipliers are already included in the previous    
-        self.multiplier = 1
-        self.findSegments()
-            
-            
 
     def addZernike(self, zernike_pattern=None):
         if zernike_pattern is not None:
@@ -202,15 +184,10 @@ class Control(inLib.Device):
             else:
                 zern = self.zernike
         if self.zernike is not None:
-            self.mirror.addToPattern(zern * self.preMultiplier)
-#             self.z_store +=1
-#             zernike_pattern
-            
+            self.mirror.addToPattern(zern * self.preMultiplier) # Here premultiplyer already counts for part of the scaling factor.
+#             zernike_pattern            
             
         return self.returnPattern()
-
-    def getNumberOfZernToVary(self):
-        return self.numZernsToVary
 
   
     def advancePatternWithPipe(self):
@@ -232,9 +209,54 @@ class Control(inLib.Device):
                          
     def addOther(self, MOD):
         # Update by Dan on 07/14. 
-                         
-                         
-                
+        pass
+    
+    
+    def setMod_status(self,index,state):
+        # this feels so awkward to handle. But let it be.
+        self.pool.z_active[index] = state
+    
+    
+class Modulation_pool(object):
+    def __init__(self,z_max):
+        self.multi_list = []
+        self.z_max = z_max
+        self.zen_list = []
+        self.z_store = 0
+        self.z_active = []
+    
+    def append_mod(self, zm, multi=1):
+        npad = self.z_max - len(zm)
+        if npad>0:
+            zmodes = np.lib.pad(zm,(0, npad), 'constant', constant_value = 0.)
+        else:
+            zmodes = zm[:self.z_max] 
+        self.zen_list.append(zmodes)
+        self.multi_list.append(multi) 
+        self.z_store +=1
+        self.z_active.append(True)
+        
+    def delete_mod(self, ndel = -1):
+        # by default: delete the last element 
+        del(self.zen_list[ndel])
+        del(self.multi_list[ndel])
+        del(self.z_active[ndel])
+        self.z_store -=1
+        
+        
+    def synth_mod(self):
+        # find the Active modulations
+        n_active = [i for i, s in enumerate(self.z_active) if s] # select all the True modes
+        z_coeff = np.zeros_like(self.zen_list[0], dtype='float')
+        for nmod in n_active:
+            z_coeff += self.multi_list[nm]*self.zen_list[nm]
+            
+        return z_coeff 
+        """ 
+        This is the final zernike modes scaled by all the multipliers. When applying to the mirror, there's no
+        need to rescale it with
+        """    
+            
         
 
 class Mirror():
@@ -379,13 +401,6 @@ class Mirror():
 
     def useSegements(self,segs):
         self.segOffsets = segs.copy()
-
-class Modulation_pool():
-# Modulation pool added     
-    
-    self.multi_list = []
-    self.zen_list = []
-    self.z_store = 0
 
 
 
