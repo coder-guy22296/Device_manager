@@ -1,3 +1,5 @@
+# This should be shaped into an independent module 
+
 import numpy as np
 import libtim.zern
 import matplotlib.pyplot as plt
