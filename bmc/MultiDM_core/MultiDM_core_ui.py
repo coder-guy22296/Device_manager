@@ -16,10 +16,6 @@ The required buttons:
     
     
 """
-    
-
-
-
 
 
 class UI(inLib.DeviceUI):
@@ -56,8 +52,7 @@ class UI(inLib.DeviceUI):
         self._ui.lineEdit_premult.setText(str(self._control.preMultiplier))
 
         self.pattern=None
-        
-        
+        self._modulations = [] # added by Dan on 07/14 
         
         self._ui.pushButton_setMods.clicked.connect(self.set_modulations) # added by Dan
         self._applyToMirrorThread = None
@@ -136,7 +131,10 @@ class UI(inLib.DeviceUI):
 
     def set_modulations(self):
 #        07/14: This should serve as "set" in the adaptive optics module
-        pass
+#        adapted from adaptiveOptics_ui
+        for m in self._modulations:
+            state = m.checkbox.isChecked()
+            self._control.setModulationActive(m.index, state)
    
 
     def pokeSegment(self):
