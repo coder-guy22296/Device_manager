@@ -1,4 +1,5 @@
 # simulate the deformable mirror 
+# No calculation for the pupil function
 import numpy as np 
 import libtim.zern 
 import matplotlib.pyplot as plt
