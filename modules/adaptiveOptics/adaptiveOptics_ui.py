@@ -289,6 +289,7 @@ class UI(inLib.ModuleUI):
         self.use_zernike = False 
 
     # This is connection from the button "Modulate"
+    # 07/18: Adapt this to the MultiDM_core
     def modulate(self):
         modulation = Modulation(len(self._modulations), self)
         self._ui.verticalLayoutModulations.insertWidget(0, modulation.checkbox)

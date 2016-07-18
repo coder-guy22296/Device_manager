@@ -13,6 +13,8 @@ import skimage
 """
 The required buttons:
     getGeometry
+    add Modulation and its multiplier 
+    
     
     
 """
@@ -225,6 +227,8 @@ class UI(inLib.DeviceUI):
         modulation = Modulation(len(self._modulations), self)
         self._ui.verticalLayoutModulations.insertWidget(0, modulation.checkbox)
         self._modulations.append(modulation)
+        self._control.modulatePF(self.use_zernike)
+
 #        self._control.modulatePF(self.use_zernike)
     
 
