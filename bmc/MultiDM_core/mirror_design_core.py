@@ -397,8 +397,10 @@ class Ui_Form(object):
         spacerItem = QtGui.QSpacerItem(20, 317, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayoutModulations.addItem(spacerItem)
         
+        
+        # 07/17: connect pushButton_setMods
         self.pushButton_setMods = QtGui.QPushButton(self.groupBoxModulations)
-        self.pushButton_setMods.setText(QtGui.QApplication.translate("Form", "Set", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButton_setMods.setText(QtGui.QApplication.translate("Form", "Set modulations", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton_setMods.setObjectName(_fromUtf8("pushButton_setMods"))
         self.verticalLayoutModulations.addWidget(self.pushButton_setMods)
         self.horizontalLayout.addWidget(self.groupBoxModulations)        

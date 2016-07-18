@@ -154,8 +154,6 @@ class Control(inLib.Device):
     def clear(self):
         self.mirror.clear()
 
-    def setZernMode(self, mode):
-        self.zernMode = mode
     
     def calcZernike_single(self, mode, amp, radius=None, useMask=True):
         # this is for single Zernike
@@ -163,16 +161,16 @@ class Control(inLib.Device):
             radius = self.mirror.nPixels/2
         modes = np.zeros((mode))
         modes[mode-1]=amp
-        self.zernike = libtim.zern.calc_zernike(modes, radius, mask=useMask,
+        self.mirror.pattern = libtim.zern.calc_zernike(modes, radius, mask=useMask,
                                                 zern_data = {})
-        return self.zernike
+        return self.mirror.pattern
     
     def calcZernike_multi(self, amps, radius = None, useMask = True):
         if radius is None:
             radius = self.mirror.nPixels/2
-        self.zernike = libtim.zern.calc_zernike(amps,radius, mask = useMask, zern_data = {})
+        self.mirror.pattern = libtim.zern.calc_zernike(amps,radius, mask = useMask, zern_data = {})
         
-        return self.zernike
+        return self.mirror.pattern
             
 
     def addZernike(self, zernike_pattern=None):
@@ -215,6 +213,16 @@ class Control(inLib.Device):
     def setMod_status(self,index,state):
         # this feels so awkward to handle. But let it be.
         self.pool.z_active[index] = state
+        
+        
+    def mod_from_pool(self):
+        amps = self.pool.synth_mod()
+        self.mirror.pattern = self.calcZernike_multi(amps)
+        self.mirror.findSeg()
+        # Up to here, the pattern is not added to the mirror yet.
+#         self.applyToMirror()
+        
+        
     
     
 class Modulation_pool(object):
@@ -317,16 +325,6 @@ class Mirror():
             print "Mirror.addToPattern: Pattern  has shape: ", self.pattern.shape
         return self.pattern
         
-
-    def whereSegment(self, seg):
-        temp = np.zeros_like(self.pattern)
-        unraveled = np.unravel_index(seg, [self.nSegments, self.nSegments])
-        xStart = self.borders[unraveled[0]]
-        xStop = self.borders[unraveled[0]+1]
-        yStart = self.borders[unraveled[1]]
-        yStop = self.borders[unraveled[1]+1]
-        temp[xStart:xStop,yStart:yStop] = -1
-        return np.where(temp==-1)
 
     def addOffset(self, seg, value):
         #print "adding %i to segment %i." % (value,seg)

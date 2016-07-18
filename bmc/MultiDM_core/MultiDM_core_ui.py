@@ -137,6 +137,12 @@ class UI(inLib.DeviceUI):
         for m in self._modulations:
             state = m.checkbox.isChecked()
             self._control.setMod_status(m.index, state)
+            
+        self._control.mod_from_pool()
+        self.refreshPattern()
+        
+#             
+        # 07/17: complete the modulation
    
 
     def pokeSegment(self):
