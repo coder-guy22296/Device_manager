@@ -407,11 +407,12 @@ class Ui_Form(object):
         self.verticalLayoutModulations.addItem(spacerItem)
         
         
-        # 07/17: connect pushButton_setMods
-        self.pushButton_setMods = QtGui.QPushButton(self.groupBoxModulations)
-        self.pushButton_setMods.setText(QtGui.QApplication.translate("Form", "Set modulations", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButton_setMods.setObjectName(_fromUtf8("pushButton_setMods"))
-        self.verticalLayoutModulations.addWidget(self.pushButton_setMods)
+        # 07/20: connect pushButton_syncMods
+        # this is similar to the "set" button in adaptive optics module
+        self.pushButton_syncMods = QtGui.QPushButton(self.groupBoxModulations)
+        self.pushButton_syncMods.setText(QtGui.QApplication.translate("Form", "Set modulations", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButton_syncMods.setObjectName(_fromUtf8("pushButton_syncMods"))
+        self.verticalLayoutModulations.addWidget(self.pushButton_syncMods)
         self.horizontalLayout.addWidget(self.groupBoxModulations)        
         
         

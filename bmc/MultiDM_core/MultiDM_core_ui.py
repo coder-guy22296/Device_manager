@@ -53,7 +53,7 @@ class UI(inLib.DeviceUI):
         
         
         # This is replaced by add_zernike to modulate
-#         self._ui.pushButton_modulateZernike.clicked.connect(self.modZernike)
+        self._ui.pushButton_modulateZernike.clicked.connect(self.addModulation)
         self._ui.pushButton_createGroup.clicked.connect(self.createGroup)
         self._ui.pushButton_setToGroup.clicked.connect(self.setGroupVal)
 
@@ -64,9 +64,8 @@ class UI(inLib.DeviceUI):
         self._ui.lineEdit_premult.setText(str(self._control.preMultiplier))
 
         self.pattern=None
-        self._modulations = [] # added by Dan on 07/14 
-        
-        self._ui.pushButton_setMods.clicked.connect(self.set_modulations) # added by Dan
+        self._modulations = []         
+        self._ui.pushButton_syncMods.clicked.connect(self.syncMods) # added by Dan
         self._applyToMirrorThread = None
 #         self._applyManyZernsThread = None
 #         self._applyManyZernRadiiThread = None
@@ -86,7 +85,7 @@ class UI(inLib.DeviceUI):
     def loadSegs(self):
         filename = QtGui.QFileDialog.getOpenFileName(None,'Open segments','','*.*')
         self._control.loadSegments(str(filename))
-        segments = self._control.getSegments()
+        segments = self._control.returnSegments()
         self._displaySegments(segments)
 
     def clearPattern(self):
@@ -116,8 +115,7 @@ class UI(inLib.DeviceUI):
         self._displayPhase(pattern)
 
     def getSegments(self):
-        self._control.findSegments()
-        segments = self._control.getSegments()
+        segments = self._control.returnSegments()
         self._displaySegments(segments)
 
     def reconfig(self):
@@ -141,27 +139,38 @@ class UI(inLib.DeviceUI):
         self._applyToMirrorThread.start()
         #self._control.applyToMirror()
 
+    # --- Below are functions for tab_2, zernike functions
+   
     def addZern(self):
         # 07/20: this function adds one zernike modulation into the stack
         mode = self._ui.spinBox_zernMode.value()
         amp = float(self._ui.lineEdit_zernAmp.text())
-        mask = self._ui.checkBox_zernMask.isChecked()
+#         mask = self._ui.checkBox_zernMask.isChecked()
+        self._control.push_to_zernike(mode, amp)
+        
+        # Here we should have a temporary stack for saving modulations
+        # 1. show the added zernike pattern 
+        # 2. push the amplitude and mode into the Zern stack
+        
+    def addModulation(self):
+        # edited on 07/20: we need a verticalLayoutModulations
+        self._control.push_to_pool()
+        modulation = Modulation(len(self._modulations), self)
+        self._ui.verticalLayoutModulations.insertWidget(0, modulation.checkbox)
+        self._modulations.append(modulation)
         
         
 
-#         self._control.calcZernike_single(mode, amp, radius = None, useMask = mask) # pattern is updated
-        
-
-
-    def set_modulations(self):
+    def syncMods(self):
 #        07/14: This should serve as "set" in the adaptive optics module
 #        adapted from adaptiveOptics_ui
         for m in self._modulations:
             state = m.checkbox.isChecked()
             self._control.setMod_status(m.index, state)
             
-        self._control.mod_from_pool()
-        self.refreshPattern()
+        self._control.mod_from_pool() # both pattern and segs are updated here
+        self.refreshPattern() # display pattern
+        self.getSegments() # display segments
         
 #             
         # 07/17: complete the modulation
@@ -188,6 +197,7 @@ class UI(inLib.DeviceUI):
         self._ui.lineEdit_cy.setText(str(int(cy)))
 
     # temporarily disabled on 07/20
+    # replaced by addModulation
 #     def modZernike(self):
 #         # modulate 
 #         pattern = self._control.addZernike()
@@ -238,15 +248,6 @@ class UI(inLib.DeviceUI):
         self._ui.label_minSeg.setText("Minimum: %.2f" % trueSegs.min())
 
     
-    def modulate(self):
-        # This is how the modulation is appended to the modulation list 
-        modulation = Modulation(len(self._modulations), self)
-        self._ui.verticalLayoutModulations.insertWidget(0, modulation.checkbox)
-        self._modulations.append(modulation)
-        # question: How to associate modulation with the pattern? 
-        
-
-#        self._control.modulatePF(self.use_zernike)
     
 
     def shutDown(self):

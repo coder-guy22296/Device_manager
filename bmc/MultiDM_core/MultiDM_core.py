@@ -23,10 +23,8 @@ class Control(inLib.Device):
         self._geometry = self.mirror.geometry
         self.tempfilename = 'mirrorSegs.txt'
         self.multiplier = 1.0
-
         self.preMultiplier = 80
-        self.zernike = None
-
+        
         self.group = []
         self.padding = False
 
@@ -34,7 +32,8 @@ class Control(inLib.Device):
 
         #below is added by Dan 
         # have a stack of zernike modes
-        self.z_max = 25 
+        self.z_max = 25
+        self.zernike = np.zeros(self.z_max) # Initialize self.zernike 
         self.pool = Modulation_pool(self.z_max)
         
 
@@ -124,8 +123,6 @@ class Control(inLib.Device):
         self.mirror.setPattern(newPattern)
         return self.returnPattern()
 
-    def findSegments(self):
-        self.mirror.findSeg()
 
     def setMultiplier(self,mult, pt = None):
         if pt is None:
@@ -137,10 +134,6 @@ class Control(inLib.Device):
     def setPreMultiplier(self,mult):
         self.preMultiplier = mult    
 
-
-    def getSegments(self):
-        return self.mirror.returnSegs()
-        #return self.mirror.segOffsets
 
     def returnSegments(self):
         return self.mirror.returnSegs()
@@ -206,15 +199,24 @@ class Control(inLib.Device):
                          "1", "-1"], shell=True)
                          
                          
-                         
-                         
     def addOther(self, MOD):
         # Update by Dan on 07/14. 
         pass
     
-    def push_to_pool(self, nmode, amp):
+    # ------------------- everything of zernike mode modulation and pool operation---------------------
+    
+    
+    def push_to_zernike(self, nmode, amp):
+        # push a single mode into self.zernike
+        self.zernike[nmode-1] = amp 
+        print("added mode:", nmode)
+        
+    
+    def push_to_pool(self, zm, multi):
         # added on 07/20: nmode is the zm, amp plays the multiplier's role
-        self.pool.append_mod(nmode, amp)
+        # then clear self.zernike for the next group of modulation
+        self.pool.append_mod(zm, multi)
+        self.zernike = np.zeros(self.z_max)
     
     
     def setMod_status(self,index,state):
