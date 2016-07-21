@@ -27,15 +27,19 @@ class Control(inLib.Device):
         
         self.group = []
         self.padding = False
-
         self.proc = None
-
+        
         #below is added by Dan 
         # have a stack of zernike modes
         self.z_max = 25
         self.zernike = np.zeros(self.z_max) # Initialize self.zernike 
-        self.pool = Modulation_pool(self.z_max)
+        self.pool = Zernike_pool(self.z_max)
         
+        # a pool of external modulations
+        
+        self.extern = Ext_pool()
+
+
 
     def getGeometry(self):
         return self._geometry
@@ -200,8 +204,10 @@ class Control(inLib.Device):
                          
                          
     def addOther(self, MOD):
-        # Update by Dan on 07/14. 
-        pass
+        # Update by Dan on 07/14.
+        idx = self.extern.ext_add(MOD)
+         
+        return idx
     
     # ------------------- everything of zernike mode modulation and pool operation---------------------
     
@@ -215,7 +221,8 @@ class Control(inLib.Device):
     def push_to_pool(self, zm, multi):
         # added on 07/20: nmode is the zm, amp plays the multiplier's role
         # then clear self.zernike for the next group of modulation
-        self.pool.append_mod(zm, multi)
+        idx = self.pool.append_mod(zm, multi)
+        print(idx, "th modulation, multiplier:",  multiplier)
         self.zernike = np.zeros(self.z_max)
     
     
@@ -234,7 +241,7 @@ class Control(inLib.Device):
         
     
     
-class Modulation_pool(object):
+class Zernike_pool(object):
     def __init__(self,z_max):
         self.multi_list = []
         self.z_max = z_max
@@ -252,6 +259,8 @@ class Modulation_pool(object):
         self.multi_list.append(multi) 
         self.z_store +=1
         self.z_active.append(True)
+        return self.z_store
+        
         
     def delete_mod(self, ndel = -1):
         # by default: delete the last element 
@@ -274,6 +283,23 @@ class Modulation_pool(object):
         need to rescale it with
         """    
             
+class Ext_pool():
+    # To be updated on 07/21
+    
+    def __init__(self):
+        self.ext = {}
+        self.e_store = -1
+        self.e_active = []
+    
+    def ext_add(self, MOD):
+        self.e_store +=1
+        self.ext[e_store] = MOD
+        self.e_active.append(True)
+        
+        return self.e_store
+
+
+
         
 
 class Mirror():

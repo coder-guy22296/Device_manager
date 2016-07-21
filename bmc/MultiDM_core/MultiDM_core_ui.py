@@ -46,7 +46,6 @@ class UI(inLib.DeviceUI):
         self._ui.pushButton_refresh.clicked.connect(self.refreshPattern)
         self._ui.pushButton_pad.clicked.connect(self.padZeros)
         
-        
         # 07/20: ui.pushButton_applyZern_changed into pushButton_addZern
 #         self._ui.pushButton_applyZern.clicked.connect(self.calcZernike)
         self._ui.pushButton_addZern.clicked.connect(self.addZern)
@@ -153,8 +152,9 @@ class UI(inLib.DeviceUI):
         # 2. push the amplitude and mode into the Zern stack
         
     def addModulation(self):
-        # edited on 07/20: we need a verticalLayoutModulations
-        self._control.push_to_pool()
+        # updated on 07/21: use the lineEdit for each multiplier setting 
+        mult = float(self._ui.lineEdit_mult.text())
+        self._control.push_to_pool(self._control.zernike, mult)
         modulation = Modulation(len(self._modulations), self)
         self._ui.verticalLayoutModulations.insertWidget(0, modulation.checkbox)
         self._modulations.append(modulation)
@@ -271,7 +271,7 @@ class Modulation:
         self.index = index
         self.checkbox = QtGui.QCheckBox(str(self.index))
         self.checkbox.stateChanged.connect(ui._modulation_toggled)
-        self.checkbox.toggle()
+        self.checkbox.toggle() # is it setting the checkbox as true? 
         
 
 
