@@ -60,7 +60,7 @@ class UI(inLib.DeviceUI):
 
         self._ui.lineEdit_loadMult.setText("10")
         self._ui.lineEdit_npixels.setText(str(self._control.pixels))
-#         self._ui.lineEdit_zernAmp.setText("0")
+        self._ui.lineEdit_zernAmp.setText("0")
         self._ui.lineEdit_premult.setText(str(self._control.preMultiplier))
 
         self.pattern=None
@@ -69,9 +69,9 @@ class UI(inLib.DeviceUI):
         self._ui.pushButton_setMods.clicked.connect(self.set_modulations) # added by Dan
         self._applyToMirrorThread = None
 #         self._applyManyZernsThread = None
-        self._applyManyZernRadiiThread = None
+#         self._applyManyZernRadiiThread = None
         self._applyGroupOffsetsThread = None
-        self._applyManyMultsToMirrorThread = None
+#         self._applyManyMultsToMirrorThread = None
 
     def loadPattern(self):
         filename = QtGui.QFileDialog.getOpenFileName(None,'Open pattern','','*.npy')
@@ -143,7 +143,14 @@ class UI(inLib.DeviceUI):
 
     def addZern(self):
         # 07/20: this function adds one zernike modulation into the stack
-        self._control.    
+        mode = self._ui.spinBox_zernMode.value()
+        amp = float(self._ui.lineEdit_zernAmp.text())
+        mask = self._ui.checkBox_zernMask.isChecked()
+        
+        
+
+#         self._control.calcZernike_single(mode, amp, radius = None, useMask = mask) # pattern is updated
+        
 
 
     def set_modulations(self):

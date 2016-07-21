@@ -205,9 +205,16 @@ class Control(inLib.Device):
         subprocess.call([self.executable, self.tempfilename, str(self.multiplier),
                          "1", "-1"], shell=True)
                          
+                         
+                         
+                         
     def addOther(self, MOD):
         # Update by Dan on 07/14. 
         pass
+    
+    def push_to_pool(self, nmode, amp):
+        # added on 07/20: nmode is the zm, amp plays the multiplier's role
+        self.pool.append_mod(nmode, amp)
     
     
     def setMod_status(self,index,state):

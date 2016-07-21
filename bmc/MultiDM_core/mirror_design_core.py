@@ -268,7 +268,7 @@ class Ui_Form(object):
         
         self.pushButton_modulateZernike = QtGui.QPushButton(self.tab_2)
         self.pushButton_modulateZernike.setGeometry(QtCore.QRect(20, 350, 75, 23))
-        self.pushButton_modulateZernike.setText(QtGui.QApplication.translate("Form", "Add Zernike", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButton_modulateZernike.setText(QtGui.QApplication.translate("Form", "Add Modulation", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton_modulateZernike.setObjectName(_fromUtf8("pushButton_modulateZernike"))
         self.groupBox_3 = QtGui.QGroupBox(self.tab_2)
         self.groupBox_3.setGeometry(QtCore.QRect(10, 370, 391, 151))
@@ -300,7 +300,7 @@ class Ui_Form(object):
         #07/20: change "pushButton_applyZern" into "pushButton_addZern"
         self.pushButton_addZern = QtGui.QPushButton(self.groupBox_3)
         self.pushButton_addZern.setGeometry(QtCore.QRect(289, 48, 86, 19))
-        self.pushButton_addZern.setText(QtGui.QApplication.translate("Form", "Apply", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButton_addZern.setText(QtGui.QApplication.translate("Form", "Add Zern mode", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton_addZern.setObjectName(_fromUtf8("pushButton_addZern"))
         
         
