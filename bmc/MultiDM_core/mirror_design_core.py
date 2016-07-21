@@ -263,6 +263,8 @@ class Ui_Form(object):
         self.mplwidgetZern.setObjectName(_fromUtf8("mplwidgetZern"))
         
         # This is modulate zernike 
+        # updated 07/18: To 
+        
         self.pushButton_modulateZernike = QtGui.QPushButton(self.tab_2)
         self.pushButton_modulateZernike.setGeometry(QtCore.QRect(20, 350, 75, 23))
         self.pushButton_modulateZernike.setText(QtGui.QApplication.translate("Form", "Add Zernike", None, QtGui.QApplication.UnicodeUTF8))
@@ -279,6 +281,8 @@ class Ui_Form(object):
         self.label_7.setGeometry(QtCore.QRect(121, 48, 51, 16))
         self.label_7.setText(QtGui.QApplication.translate("Form", "Amplitude:", None, QtGui.QApplication.UnicodeUTF8))
         self.label_7.setObjectName(_fromUtf8("label_7"))
+        
+        
         self.spinBox_zernMode = QtGui.QSpinBox(self.groupBox_3)
         self.spinBox_zernMode.setGeometry(QtCore.QRect(52, 48, 63, 19))
         self.spinBox_zernMode.setMinimum(1)

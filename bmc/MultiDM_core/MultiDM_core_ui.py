@@ -13,7 +13,10 @@ import skimage
 """
 The required buttons:
     getGeometry
-    add Modulation and its multiplier 
+    add Modulation and its multiplier: 
+    
+    Have a z-mode and its amplitude, click "add" 
+    display the selected z-mode 
     
     
     
@@ -42,7 +45,9 @@ class UI(inLib.DeviceUI):
         self._ui.pushButton_clear.clicked.connect(self.clearPattern)
         self._ui.pushButton_refresh.clicked.connect(self.refreshPattern)
         self._ui.pushButton_pad.clicked.connect(self.padZeros)
-        self._ui.pushButton_applyZern.clicked.connect(self.calcZernike)
+        
+        
+#         self._ui.pushButton_applyZern.clicked.connect(self.calcZernike)
         
         # This is replaced by add_zernike to modulate
 #         self._ui.pushButton_modulateZernike.clicked.connect(self.modZernike)
@@ -52,7 +57,7 @@ class UI(inLib.DeviceUI):
 
         self._ui.lineEdit_loadMult.setText("10")
         self._ui.lineEdit_npixels.setText(str(self._control.pixels))
-        self._ui.lineEdit_zernAmp.setText("0")
+#         self._ui.lineEdit_zernAmp.setText("0")
         self._ui.lineEdit_premult.setText(str(self._control.preMultiplier))
 
         self.pattern=None
@@ -60,7 +65,7 @@ class UI(inLib.DeviceUI):
         
         self._ui.pushButton_setMods.clicked.connect(self.set_modulations) # added by Dan
         self._applyToMirrorThread = None
-        self._applyManyZernsThread = None
+#         self._applyManyZernsThread = None
         self._applyManyZernRadiiThread = None
         self._applyGroupOffsetsThread = None
         self._applyManyMultsToMirrorThread = None
@@ -167,13 +172,6 @@ class UI(inLib.DeviceUI):
         self._ui.lineEdit_cx.setText(str(int(cx)))
         self._ui.lineEdit_cy.setText(str(int(cy)))
 
-    def calcZernike(self):
-        mode = self._ui.spinBox_zernMode.value()
-        amplitude = float(self._ui.lineEdit_zernAmp.text())
-        mask = self._ui.checkBox_zernMask.isChecked()
-        radius = int(self._ui.lineEdit_zernRad.text())
-        zern = self._control.calcZernike(mode, amplitude, radius=radius, useMask=mask)
-        self._displayZern(zern)
 
     def modZernike(self):
         pattern = self._control.addZernike()
@@ -224,6 +222,7 @@ class UI(inLib.DeviceUI):
 
     
     def modulate(self):
+        # This is how the modulation is appended to the modulation list 
         modulation = Modulation(len(self._modulations), self)
         self._ui.verticalLayoutModulations.insertWidget(0, modulation.checkbox)
         self._modulations.append(modulation)
@@ -248,7 +247,6 @@ class ApplyToMirror(QtCore.QThread):
         self._control.applyToMirror()
 
 
-
 class Modulation:
     def __init__(self, index, ui):
         self.index = index
@@ -257,30 +255,6 @@ class Modulation:
         self.checkbox.toggle()
         
 
-
-
-class FitResultsDialog(QtGui.QDialog):
-    
-    def __init__(self, PF, parent=None):
-        QtGui.QDialog.__init__(self, parent)
-        self.PF = PF
-        self.ui = fit_results_design.Ui_Dialog()
-        self.ui.setupUi(self)
-        self.ui.lineEditCoefficients.setText(str(PF.zernike_coefficients))
-        self.ui.mplwidget.figure.delaxes(self.ui.mplwidget.figure.axes[0])
-        axes_raw = self.ui.mplwidget.figure.add_subplot(131)
-        axes_raw.matshow(PF.phase, cmap='RdBu')
-        axes_raw.set_title('Raw data')
-        axes_fit = self.ui.mplwidget.figure.add_subplot(132)
-        axes_fit.matshow(PF.zernike, cmap='RdBu', vmin=PF.phase.min(), vmax=PF.phase.max())
-        axes_fit.set_title('Fit')
-        axes_coefficients = self.ui.mplwidget.figure.add_subplot(133)
-        axes_coefficients.bar(np.arange(15), PF.zernike_coefficients)
-        axes_coefficients.set_title('Zernike coefficients')
-
-
-    def getRemove(self):
-        return self.ui.checkBoxRemovePTTD.isChecked()
 
 
 class Scanner(QtCore.QThread):
