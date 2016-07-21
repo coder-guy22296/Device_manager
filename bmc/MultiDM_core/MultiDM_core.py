@@ -172,20 +172,20 @@ class Control(inLib.Device):
         
         return self.mirror.pattern
             
-
-    def addZernike(self, zernike_pattern=None):
-        if zernike_pattern is not None:
-            zern = zernike_pattern
-        else:
-            if self.zernike is None:
-                return 0
-            else:
-                zern = self.zernike
-        if self.zernike is not None:
-            self.mirror.addToPattern(zern * self.preMultiplier) # Here premultiplyer already counts for part of the scaling factor.
-#             zernike_pattern            
-            
-        return self.returnPattern()
+    # disabled on 07/20
+#     def addZernike(self, zernike_pattern=None):
+#         if zernike_pattern is not None:
+#             zern = zernike_pattern
+#         else:
+#             if self.zernike is None:
+#                 return 0
+#             else:
+#                 zern = self.zernike
+#         if self.zernike is not None:
+#             self.mirror.addToPattern(zern * self.preMultiplier) # Here premultiplyer already counts for part of the scaling factor.
+# #             zernike_pattern            
+#             
+#         return self.returnPattern()
 
   
     def advancePatternWithPipe(self):

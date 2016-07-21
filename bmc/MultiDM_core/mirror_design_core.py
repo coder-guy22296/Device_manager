@@ -23,7 +23,7 @@ self._ui.pushButton_load.clicked.connect(self.loadPattern)
         self._ui.pushButton_clear.clicked.connect(self.clearPattern)
         self._ui.pushButton_refresh.clicked.connect(self.refreshPattern)
         self._ui.pushButton_pad.clicked.connect(self.padZeros)
-        self._ui.pushButton_applyZern.clicked.connect(self.calcZernike)
+        self._ui.pushButton_addZern.clicked.connect(self.calcZernike)
         self._ui.pushButton_modulateZernike.clicked.connect(self.modZernike)
         self._ui.pushButton_createGroup.clicked.connect(self.createGroup)
         self._ui.pushButton_setToGroup.clicked.connect(self.setGroupVal) 
@@ -258,12 +258,13 @@ class Ui_Form(object):
         self.tabWidgetPF.addTab(self.tab, _fromUtf8(""))
         self.tab_2 = QtGui.QWidget()
         self.tab_2.setObjectName(_fromUtf8("tab_2"))
+        # mplwidgetZern
         self.mplwidgetZern = MatplotlibWidget(self.tab_2)
         self.mplwidgetZern.setGeometry(QtCore.QRect(10, 0, 380, 349))
         self.mplwidgetZern.setObjectName(_fromUtf8("mplwidgetZern"))
         
         # This is modulate zernike 
-        # updated 07/18: To 
+        # updated 07/20: Add multiple Zernike  onto the module 
         
         self.pushButton_modulateZernike = QtGui.QPushButton(self.tab_2)
         self.pushButton_modulateZernike.setGeometry(QtCore.QRect(20, 350, 75, 23))
@@ -282,7 +283,7 @@ class Ui_Form(object):
         self.label_7.setText(QtGui.QApplication.translate("Form", "Amplitude:", None, QtGui.QApplication.UnicodeUTF8))
         self.label_7.setObjectName(_fromUtf8("label_7"))
         
-        
+        # 07/20: spinbox, amplitude and mask --- sealed 
         self.spinBox_zernMode = QtGui.QSpinBox(self.groupBox_3)
         self.spinBox_zernMode.setGeometry(QtCore.QRect(52, 48, 63, 19))
         self.spinBox_zernMode.setMinimum(1)
@@ -295,10 +296,14 @@ class Ui_Form(object):
         self.checkBox_zernMask.setGeometry(QtCore.QRect(234, 49, 47, 17))
         self.checkBox_zernMask.setText(QtGui.QApplication.translate("Form", "Mask", None, QtGui.QApplication.UnicodeUTF8))
         self.checkBox_zernMask.setObjectName(_fromUtf8("checkBox_zernMask"))
-        self.pushButton_applyZern = QtGui.QPushButton(self.groupBox_3)
-        self.pushButton_applyZern.setGeometry(QtCore.QRect(289, 48, 86, 19))
-        self.pushButton_applyZern.setText(QtGui.QApplication.translate("Form", "Apply", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButton_applyZern.setObjectName(_fromUtf8("pushButton_applyZern"))
+        
+        #07/20: change "pushButton_applyZern" into "pushButton_addZern"
+        self.pushButton_addZern = QtGui.QPushButton(self.groupBox_3)
+        self.pushButton_addZern.setGeometry(QtCore.QRect(289, 48, 86, 19))
+        self.pushButton_addZern.setText(QtGui.QApplication.translate("Form", "Apply", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButton_addZern.setObjectName(_fromUtf8("pushButton_addZern"))
+        
+        
         self.spinBox_numZerns = QtGui.QSpinBox(self.groupBox_3)
         self.spinBox_numZerns.setGeometry(QtCore.QRect(52, 73, 63, 19))
         self.spinBox_numZerns.setMinimum(1)
@@ -418,12 +423,14 @@ class Ui_Form(object):
         self.horizontalLayout.addWidget(self.groupBoxModulations)
 
 
-
         self.retranslateUi(Form)
         self.tabWidgetPF.setCurrentIndex(3)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
+
+
     def retranslateUi(self, Form):
+        # these are tabs  --- sealed
         self.tabWidgetPF.setTabText(self.tabWidgetPF.indexOf(self.tabWidgetPFPage1), QtGui.QApplication.translate("Form", "Pattern", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidgetPF.setTabText(self.tabWidgetPF.indexOf(self.tab_4), QtGui.QApplication.translate("Form", "Segment", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidgetPF.setTabText(self.tabWidgetPF.indexOf(self.tab), QtGui.QApplication.translate("Form", "Running Sharpness", None, QtGui.QApplication.UnicodeUTF8))
@@ -432,3 +439,5 @@ class Ui_Form(object):
         self.tabWidgetPF.setTabText(self.tabWidgetPF.indexOf(self.tab_5), QtGui.QApplication.translate("Form", "2x2", None, QtGui.QApplication.UnicodeUTF8))
 
 from matplotlibwidget import MatplotlibWidget
+
+

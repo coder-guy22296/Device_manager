@@ -47,7 +47,10 @@ class UI(inLib.DeviceUI):
         self._ui.pushButton_pad.clicked.connect(self.padZeros)
         
         
+        # 07/20: ui.pushButton_applyZern_changed into pushButton_addZern
 #         self._ui.pushButton_applyZern.clicked.connect(self.calcZernike)
+        self._ui.pushButton_addZern.clicked.connect(self.addZern)
+        
         
         # This is replaced by add_zernike to modulate
 #         self._ui.pushButton_modulateZernike.clicked.connect(self.modZernike)
@@ -138,6 +141,11 @@ class UI(inLib.DeviceUI):
         self._applyToMirrorThread.start()
         #self._control.applyToMirror()
 
+    def addZern(self):
+        # 07/20: this function adds one zernike modulation into the stack
+        self._control.    
+
+
     def set_modulations(self):
 #        07/14: This should serve as "set" in the adaptive optics module
 #        adapted from adaptiveOptics_ui
@@ -172,10 +180,11 @@ class UI(inLib.DeviceUI):
         self._ui.lineEdit_cx.setText(str(int(cx)))
         self._ui.lineEdit_cy.setText(str(int(cy)))
 
-
-    def modZernike(self):
-        pattern = self._control.addZernike()
-        self._displayPhase(pattern)
+    # temporarily disabled on 07/20
+#     def modZernike(self):
+#         # modulate 
+#         pattern = self._control.addZernike()
+#         self._displayPhase(pattern)
 
     def createGroup(self):
         groupStr = self._ui.lineEdit_group.text()
@@ -198,6 +207,7 @@ class UI(inLib.DeviceUI):
             self._ui.mplwidgetGrouped.draw()
 
     def _displayZern(self, zernike):
+        # 07/20: display widgetZern
         if zernike is not None:
             self._ui.mplwidgetZern.figure.axes[0].matshow(zernike, cmap='RdBu')
             self._ui.mplwidgetZern.draw()
@@ -226,7 +236,8 @@ class UI(inLib.DeviceUI):
         modulation = Modulation(len(self._modulations), self)
         self._ui.verticalLayoutModulations.insertWidget(0, modulation.checkbox)
         self._modulations.append(modulation)
-        self._control.modulatePF(self.use_zernike)
+        # question: How to associate modulation with the pattern? 
+        
 
 #        self._control.modulatePF(self.use_zernike)
     
