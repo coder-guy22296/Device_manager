@@ -315,9 +315,6 @@ class Mirror():
 
         self.segOffsets = np.zeros((nSegments, nSegments))
         self.segTilts = np.zeros((nSegments, nSegments))
-
-        #self.setPupilGeometry(nPixels/2,nPixels/2,nPixels)
-
         self.initGeo(self.nPixels)
 
     def initGeo(self, npixels):
@@ -383,8 +380,6 @@ class Mirror():
                 yEnd = self.borders[jj+1]
                 
                 av = np.mean(self.pattern[xStart:xEnd, yStart:yEnd])
-                self.segOffsets[ii,jj] = av
-                
 
 
     def findTilt(self, tilt):
