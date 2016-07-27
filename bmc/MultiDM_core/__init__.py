@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
 '''
-A python package for ASI MS-2000 XY stage
+A python package for bmc's adaptive optics (deformable mirror)
+
 '''
