@@ -13,6 +13,11 @@ import skimage
 """
 The required buttons:
     getGeometry
+    add Modulation and its multiplier: 
+    
+    Have a z-mode and its amplitude, click "add" 
+    display the selected z-mode 
+    
     
     
 """
@@ -40,10 +45,14 @@ class UI(inLib.DeviceUI):
         self._ui.pushButton_clear.clicked.connect(self.clearPattern)
         self._ui.pushButton_refresh.clicked.connect(self.refreshPattern)
         self._ui.pushButton_pad.clicked.connect(self.padZeros)
-        self._ui.pushButton_applyZern.clicked.connect(self.calcZernike)
+        
+        # 07/20: ui.pushButton_applyZern_changed into pushButton_addZern
+#         self._ui.pushButton_applyZern.clicked.connect(self.calcZernike)
+        self._ui.pushButton_addZern.clicked.connect(self.addZern)
+        
         
         # This is replaced by add_zernike to modulate
-#         self._ui.pushButton_modulateZernike.clicked.connect(self.modZernike)
+        self._ui.pushButton_modulateZernike.clicked.connect(self.addModulation)
         self._ui.pushButton_createGroup.clicked.connect(self.createGroup)
         self._ui.pushButton_setToGroup.clicked.connect(self.setGroupVal)
 
@@ -54,14 +63,13 @@ class UI(inLib.DeviceUI):
         self._ui.lineEdit_premult.setText(str(self._control.preMultiplier))
 
         self.pattern=None
-        self._modulations = [] # added by Dan on 07/14 
-        
-        self._ui.pushButton_setMods.clicked.connect(self.set_modulations) # added by Dan
+        self._modulations = []         
+        self._ui.pushButton_syncMods.clicked.connect(self.syncMods) # added by Dan
         self._applyToMirrorThread = None
-        self._applyManyZernsThread = None
-        self._applyManyZernRadiiThread = None
+#         self._applyManyZernsThread = None
+#         self._applyManyZernRadiiThread = None
         self._applyGroupOffsetsThread = None
-        self._applyManyMultsToMirrorThread = None
+#         self._applyManyMultsToMirrorThread = None
 
     def loadPattern(self):
         filename = QtGui.QFileDialog.getOpenFileName(None,'Open pattern','','*.npy')
@@ -76,7 +84,7 @@ class UI(inLib.DeviceUI):
     def loadSegs(self):
         filename = QtGui.QFileDialog.getOpenFileName(None,'Open segments','','*.*')
         self._control.loadSegments(str(filename))
-        segments = self._control.getSegments()
+        segments = self._control.returnSegments()
         self._displaySegments(segments)
 
     def clearPattern(self):
@@ -106,8 +114,7 @@ class UI(inLib.DeviceUI):
         self._displayPhase(pattern)
 
     def getSegments(self):
-        self._control.findSegments()
-        segments = self._control.getSegments()
+        segments = self._control.returnSegments()
         self._displaySegments(segments)
 
     def reconfig(self):
@@ -131,12 +138,42 @@ class UI(inLib.DeviceUI):
         self._applyToMirrorThread.start()
         #self._control.applyToMirror()
 
-    def set_modulations(self):
+    # --- Below are functions for tab_2, zernike functions
+   
+    def addZern(self):
+        # 07/20: this function adds one zernike modulation into the stack
+        mode = self._ui.spinBox_zernMode.value()
+        amp = float(self._ui.lineEdit_zernAmp.text())
+#         mask = self._ui.checkBox_zernMask.isChecked()
+        self._control.push_to_zernike(mode, amp)
+        
+        # Here we should have a temporary stack for saving modulations
+        # 1. show the added zernike pattern 
+        # 2. push the amplitude and mode into the Zern stack
+        
+    def addModulation(self):
+        # updated on 07/21: use the lineEdit for each multiplier setting 
+        mult = float(self._ui.lineEdit_mult.text())
+        self._control.push_to_pool(self._control.zernike, mult)
+        modulation = Modulation(len(self._modulations), self)
+        self._ui.verticalLayoutModulations.insertWidget(0, modulation.checkbox)
+        self._modulations.append(modulation)
+        
+        
+
+    def syncMods(self):
 #        07/14: This should serve as "set" in the adaptive optics module
 #        adapted from adaptiveOptics_ui
         for m in self._modulations:
             state = m.checkbox.isChecked()
             self._control.setMod_status(m.index, state)
+            
+        self._control.mod_from_pool() # both pattern and segs are updated here
+        self.refreshPattern() # display pattern
+        self.getSegments() # display segments
+        
+#             
+        # 07/17: complete the modulation
    
 
     def pokeSegment(self):
@@ -159,17 +196,12 @@ class UI(inLib.DeviceUI):
         self._ui.lineEdit_cx.setText(str(int(cx)))
         self._ui.lineEdit_cy.setText(str(int(cy)))
 
-    def calcZernike(self):
-        mode = self._ui.spinBox_zernMode.value()
-        amplitude = float(self._ui.lineEdit_zernAmp.text())
-        mask = self._ui.checkBox_zernMask.isChecked()
-        radius = int(self._ui.lineEdit_zernRad.text())
-        zern = self._control.calcZernike(mode, amplitude, radius=radius, useMask=mask)
-        self._displayZern(zern)
-
-    def modZernike(self):
-        pattern = self._control.addZernike()
-        self._displayPhase(pattern)
+    # temporarily disabled on 07/20
+    # replaced by addModulation
+#     def modZernike(self):
+#         # modulate 
+#         pattern = self._control.addZernike()
+#         self._displayPhase(pattern)
 
     def createGroup(self):
         groupStr = self._ui.lineEdit_group.text()
@@ -192,6 +224,7 @@ class UI(inLib.DeviceUI):
             self._ui.mplwidgetGrouped.draw()
 
     def _displayZern(self, zernike):
+        # 07/20: display widgetZern
         if zernike is not None:
             self._ui.mplwidgetZern.figure.axes[0].matshow(zernike, cmap='RdBu')
             self._ui.mplwidgetZern.draw()
@@ -215,11 +248,6 @@ class UI(inLib.DeviceUI):
         self._ui.label_minSeg.setText("Minimum: %.2f" % trueSegs.min())
 
     
-    def modulate(self):
-        modulation = Modulation(len(self._modulations), self)
-        self._ui.verticalLayoutModulations.insertWidget(0, modulation.checkbox)
-        self._modulations.append(modulation)
-#        self._control.modulatePF(self.use_zernike)
     
 
     def shutDown(self):
@@ -238,39 +266,14 @@ class ApplyToMirror(QtCore.QThread):
         self._control.applyToMirror()
 
 
-
 class Modulation:
     def __init__(self, index, ui):
         self.index = index
         self.checkbox = QtGui.QCheckBox(str(self.index))
         self.checkbox.stateChanged.connect(ui._modulation_toggled)
-        self.checkbox.toggle()
+        self.checkbox.toggle() # is it setting the checkbox as true? 
         
 
-
-
-class FitResultsDialog(QtGui.QDialog):
-    
-    def __init__(self, PF, parent=None):
-        QtGui.QDialog.__init__(self, parent)
-        self.PF = PF
-        self.ui = fit_results_design.Ui_Dialog()
-        self.ui.setupUi(self)
-        self.ui.lineEditCoefficients.setText(str(PF.zernike_coefficients))
-        self.ui.mplwidget.figure.delaxes(self.ui.mplwidget.figure.axes[0])
-        axes_raw = self.ui.mplwidget.figure.add_subplot(131)
-        axes_raw.matshow(PF.phase, cmap='RdBu')
-        axes_raw.set_title('Raw data')
-        axes_fit = self.ui.mplwidget.figure.add_subplot(132)
-        axes_fit.matshow(PF.zernike, cmap='RdBu', vmin=PF.phase.min(), vmax=PF.phase.max())
-        axes_fit.set_title('Fit')
-        axes_coefficients = self.ui.mplwidget.figure.add_subplot(133)
-        axes_coefficients.bar(np.arange(15), PF.zernike_coefficients)
-        axes_coefficients.set_title('Zernike coefficients')
-
-
-    def getRemove(self):
-        return self.ui.checkBoxRemovePTTD.isChecked()
 
 
 class Scanner(QtCore.QThread):

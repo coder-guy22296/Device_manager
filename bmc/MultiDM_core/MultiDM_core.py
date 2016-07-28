@@ -23,20 +23,23 @@ class Control(inLib.Device):
         self._geometry = self.mirror.geometry
         self.tempfilename = 'mirrorSegs.txt'
         self.multiplier = 1.0
-
         self.preMultiplier = 80
-        self.zernike = None
-
+        
         self.group = []
         self.padding = False
-
         self.proc = None
-
+        
         #below is added by Dan 
         # have a stack of zernike modes
-        self.z_max = 25 
-        self.pool = Modulation_pool(self.z_max)
+        self.z_max = 25
+        self.zernike = np.zeros(self.z_max) # Initialize self.zernike 
+        self.pool = Zernike_pool(self.z_max)
         
+        # a pool of external modulations
+        
+        self.extern = Ext_pool()
+
+
 
     def getGeometry(self):
         return self._geometry
@@ -124,8 +127,6 @@ class Control(inLib.Device):
         self.mirror.setPattern(newPattern)
         return self.returnPattern()
 
-    def findSegments(self):
-        self.mirror.findSeg()
 
     def setMultiplier(self,mult, pt = None):
         if pt is None:
@@ -137,10 +138,6 @@ class Control(inLib.Device):
     def setPreMultiplier(self,mult):
         self.preMultiplier = mult    
 
-
-    def getSegments(self):
-        return self.mirror.returnSegs()
-        #return self.mirror.segOffsets
 
     def returnSegments(self):
         return self.mirror.returnSegs()
@@ -154,8 +151,6 @@ class Control(inLib.Device):
     def clear(self):
         self.mirror.clear()
 
-    def setZernMode(self, mode):
-        self.zernMode = mode
     
     def calcZernike_single(self, mode, amp, radius=None, useMask=True):
         # this is for single Zernike
@@ -163,31 +158,31 @@ class Control(inLib.Device):
             radius = self.mirror.nPixels/2
         modes = np.zeros((mode))
         modes[mode-1]=amp
-        self.zernike = libtim.zern.calc_zernike(modes, radius, mask=useMask,
+        self.mirror.pattern = libtim.zern.calc_zernike(modes, radius, mask=useMask,
                                                 zern_data = {})
-        return self.zernike
+        return self.mirror.pattern
     
     def calcZernike_multi(self, amps, radius = None, useMask = True):
         if radius is None:
             radius = self.mirror.nPixels/2
-        self.zernike = libtim.zern.calc_zernike(amps,radius, mask = useMask, zern_data = {})
+        self.mirror.pattern = libtim.zern.calc_zernike(amps,radius, mask = useMask, zern_data = {})
         
-        return self.zernike
+        return self.mirror.pattern
             
-
-    def addZernike(self, zernike_pattern=None):
-        if zernike_pattern is not None:
-            zern = zernike_pattern
-        else:
-            if self.zernike is None:
-                return 0
-            else:
-                zern = self.zernike
-        if self.zernike is not None:
-            self.mirror.addToPattern(zern * self.preMultiplier) # Here premultiplyer already counts for part of the scaling factor.
-#             zernike_pattern            
-            
-        return self.returnPattern()
+    # disabled on 07/20
+#     def addZernike(self, zernike_pattern=None):
+#         if zernike_pattern is not None:
+#             zern = zernike_pattern
+#         else:
+#             if self.zernike is None:
+#                 return 0
+#             else:
+#                 zern = self.zernike
+#         if self.zernike is not None:
+#             self.mirror.addToPattern(zern * self.preMultiplier) # Here premultiplyer already counts for part of the scaling factor.
+# #             zernike_pattern            
+#             
+#         return self.returnPattern()
 
   
     def advancePatternWithPipe(self):
@@ -207,17 +202,46 @@ class Control(inLib.Device):
         subprocess.call([self.executable, self.tempfilename, str(self.multiplier),
                          "1", "-1"], shell=True)
                          
+                         
     def addOther(self, MOD):
-        # Update by Dan on 07/14. 
-        pass
+        # Update by Dan on 07/14.
+        idx = self.extern.ext_add(MOD)
+         
+        return idx
+    
+    # ------------------- everything of zernike mode modulation and pool operation---------------------
+    
+    
+    def push_to_zernike(self, nmode, amp):
+        # push a single mode into self.zernike
+        self.zernike[nmode-1] = amp 
+        print("added mode:", nmode)
+        
+    
+    def push_to_pool(self, zm, multi):
+        # added on 07/20: nmode is the zm, amp plays the multiplier's role
+        # then clear self.zernike for the next group of modulation
+        idx = self.pool.append_mod(zm, multi)
+        print(idx, "th modulation, multiplier:",  multiplier)
+        self.zernike = np.zeros(self.z_max)
     
     
     def setMod_status(self,index,state):
         # this feels so awkward to handle. But let it be.
         self.pool.z_active[index] = state
+        
+        
+    def mod_from_pool(self):
+        amps = self.pool.synth_mod()
+        self.mirror.pattern = self.calcZernike_multi(amps)
+        self.mirror.findSeg()
+        # Up to here, the pattern is not added to the mirror yet.
+#         self.applyToMirror()
+        
+        
     
     
-class Modulation_pool(object):
+class Zernike_pool(object):
     def __init__(self,z_max):
         self.multi_list = []
         self.z_max = z_max
@@ -235,6 +259,8 @@ class Modulation_pool(object):
         self.multi_list.append(multi) 
         self.z_store +=1
         self.z_active.append(True)
+        return self.z_store
+        
         
     def delete_mod(self, ndel = -1):
         # by default: delete the last element 
@@ -257,6 +283,23 @@ class Modulation_pool(object):
         need to rescale it with
         """    
             
+class Ext_pool():
+    # To be updated on 07/21
+    
+    def __init__(self):
+        self.ext = {}
+        self.e_store = -1
+        self.e_active = []
+    
+    def ext_add(self, MOD):
+        self.e_store +=1
+        self.ext[e_store] = MOD
+        self.e_active.append(True)
+        
+        return self.e_store
+
+
+
         
 
 class Mirror():
@@ -272,9 +315,6 @@ class Mirror():
 
         self.segOffsets = np.zeros((nSegments, nSegments))
         self.segTilts = np.zeros((nSegments, nSegments))
-
-        #self.setPupilGeometry(nPixels/2,nPixels/2,nPixels)
-
         self.initGeo(self.nPixels)
 
     def initGeo(self, npixels):
@@ -318,16 +358,6 @@ class Mirror():
         return self.pattern
         
 
-    def whereSegment(self, seg):
-        temp = np.zeros_like(self.pattern)
-        unraveled = np.unravel_index(seg, [self.nSegments, self.nSegments])
-        xStart = self.borders[unraveled[0]]
-        xStop = self.borders[unraveled[0]+1]
-        yStart = self.borders[unraveled[1]]
-        yStop = self.borders[unraveled[1]+1]
-        temp[xStart:xStop,yStart:yStop] = -1
-        return np.where(temp==-1)
-
     def addOffset(self, seg, value):
         #print "adding %i to segment %i." % (value,seg)
         if seg<0:
@@ -350,8 +380,6 @@ class Mirror():
                 yEnd = self.borders[jj+1]
                 
                 av = np.mean(self.pattern[xStart:xEnd, yStart:yEnd])
-                self.segOffsets[ii,jj] = av
-                
 
 
     def findTilt(self, tilt):
@@ -396,12 +424,20 @@ class Mirror():
         self.segOffsets = newSegs.reshape(12,12)
         #print "segOffsets: ", self.segOffsets
 
+    
+    def squarePat(self):
+        # Added on 07/27. Patting the 12 * 12 segments with the edge values
+        hpx = self.nPixels/2 # half of the Pixel number 
+        print(hpx)
+#         for dr in 
+        
+    
+    
+    
     def returnSegs(self):
         return self.segOffsets
 
-    def useSegements(self,segs):
-        self.segOffsets = segs.copy()
-
+    
 
 
         

@@ -37,10 +37,7 @@ class UI(inLib.ModuleUI):
         self._window.connect(self._ui.pushButtonModulate,QtCore.SIGNAL('clicked()'),self.modulate)
         self._window.connect(self._ui.pushButtonSave,QtCore.SIGNAL('clicked()'),self.savePF)
 
-        self._ui.pushButton_modUnwrapped.clicked.connect(self.modulateUnwrapped)
-
         self._ui.groupBoxModulations.toggled.connect(self._modulations_toggled)
-
         self._ui.pushButton_stopSharpness.clicked.connect(self.stopSharpness)
         self._ui.pushButton_runningSharpness.clicked.connect(self.runningSharpness)
         self._ui.pushButton_sharpnessVsZern.clicked.connect(self.sharpnessVsZern)
@@ -48,8 +45,6 @@ class UI(inLib.ModuleUI):
         self._ui.pushButton_unwrap.clicked.connect(self.unwrap)
 
         self._ui.pushButton_zernFitUnwrapped.clicked.connect(self.fitUnwrapped)
-        self._ui.pushButton_modulateZernike.clicked.connect(self.modulateUnwrappedZernike)
-
         self._ui.spinBox_zernModesToFit.setValue(self._control.zernModesToFit)
         self._ui.spinBox_zernModesToFit.valueChanged.connect(self.setZernModesToFit)
         self._ui.lineEdit_diffLimit.returnPressed.connect(self.setDiffLimit)
@@ -289,21 +284,17 @@ class UI(inLib.ModuleUI):
         self.use_zernike = False 
 
     # This is connection from the button "Modulate"
+    # 07/18: Adapt this to the MultiDM_core
     def modulate(self):
+        # 07/21: remove modulateUnwrapped, because the phase is by default unwrapped.
         modulation = Modulation(len(self._modulations), self)
         self._ui.verticalLayoutModulations.insertWidget(0, modulation.checkbox)
         self._modulations.append(modulation)
         self._control.modulatePF(self.use_zernike)
         if self.hasSLM:
             self._ui_control.slm.updateModulationDisplay()
-
-    def modulateUnwrapped(self):
-        modulation = Modulation(len(self._modulations), self)
-        self._ui.verticalLayoutModulations.insertWidget(0, modulation.checkbox)
-        self._modulations.append(modulation)
-        self._control.modulatePF_unwrapped()
-        if self.hasSLM:
-            self._ui_control.slm.updateModulationDisplay()
+            
+            
 
     def savePF(self):
         filename = QtGui.QFileDialog.getSaveFileName(None,'Save to file',
@@ -325,15 +316,6 @@ class UI(inLib.ModuleUI):
         self._ui.mplwidgetPhase_2.figure.axes[0].matshow(resultFit, cmap='RdBu')
         self._ui.mplwidgetPhase_2.draw()
         self._ui.pushButton_modulateZernike.setEnabled(True)
-
-    def modulateUnwrappedZernike(self):
-        modulation = Modulation(len(self._modulations), self)
-        self._ui.verticalLayoutModulations.insertWidget(0, modulation.checkbox)
-        self._modulations.append(modulation)
-        mask = self._ui.checkBox_useMask.isChecked()
-        self._control.modZernFitUnwrapped(useMask=mask, radius=self.zernRadius)
-        if self.hasSLM:
-            self._ui_control.slm.updateModulationDisplay()
 
 
     def shutDown(self):

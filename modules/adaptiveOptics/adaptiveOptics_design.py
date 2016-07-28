@@ -332,9 +332,9 @@ class Ui_Form(object):
         self.pushButton_unwrap.setText(QtGui.QApplication.translate("Form", "Unwrap", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton_unwrap.setObjectName(_fromUtf8("pushButton_unwrap"))
         self.gridLayout_3.addWidget(self.pushButton_unwrap, 10, 1, 1, 1)
-        self.pushButton_modUnwrapped = QtGui.QPushButton(self.groupBoxPhase)
-        self.pushButton_modUnwrapped.setText(QtGui.QApplication.translate("Form", "Mod. Unwrpd", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButton_modUnwrapped.setObjectName(_fromUtf8("pushButton_modUnwrapped"))
+       
+       
+        # remove the redundant button "modulation unwrapped"
         self.gridLayout_3.addWidget(self.pushButton_modUnwrapped, 11, 1, 1, 1)
         self.pushButton_zernFitUnwrapped = QtGui.QPushButton(self.groupBoxPhase)
         self.pushButton_zernFitUnwrapped.setText(QtGui.QApplication.translate("Form", "Fit Unwrpd", None, QtGui.QApplication.UnicodeUTF8))
@@ -384,6 +384,8 @@ class Ui_Form(object):
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.pushButtonModulate.sizePolicy().hasHeightForWidth())
+        
+        # The modulate button below the PF pattern 
         self.pushButtonModulate.setSizePolicy(sizePolicy)
         self.pushButtonModulate.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.pushButtonModulate.setText(QtGui.QApplication.translate("Form", "Modulate", None, QtGui.QApplication.UnicodeUTF8))

@@ -1,5 +1,5 @@
 #!/usr/bin/python
-
+# This should be wrapped into a cleaner class.
 import numpy as _np
 from scipy import fftpack as _fftpack
 from scipy import ndimage

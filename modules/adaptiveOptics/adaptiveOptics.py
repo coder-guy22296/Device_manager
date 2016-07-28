@@ -32,15 +32,13 @@ class Control(inLib.Module):
         self.hasMirror = settings['hasMirror']
 
         self._PSF = None
+        self._PF = None
+        self._PFradius = None
         self._sharpness = None
+        
 
         self.sharpnessList = []
-
-        self.currentZernAmpIndex=0
-        self.zernAmpMin = -0.6
-        self.zernAmpMax = 0.6
-        self.zernAmps = np.linspace(self.zernAmpMin,self.zernAmpMax,100)
-        self.zernModesToFit = 20 #Number of zernike modes to fit unwrapped pupil functions
+        self.zernModesToFit = 22 #Number of zernike modes to fit unwrapped pupil functions
 
         self._zernFitUnwrapped = None
         self._zernFitUnwrappedModes = None
@@ -330,8 +328,8 @@ class Control(inLib.Module):
         self._PF.zernike_coefficients = p
         '''
         nx,ny = self._PF.phase.shape
-        radius = np.sum(self._pupil.r[nx/2,:]<1)/2
-        print "Radius of fitted zernike: ", radius
+        self._PFradius = np.sum(self._pupil.r[nx/2,:]<1)/2
+        print "Radius of fitted zernike: ", self._PFradius
         #fitResults = libtim.zern.fit_zernike(self._PF.phase, rad=radius, nmodes=15)
         unwrapped=self.unwrap()
         print "Unwrapped!"
@@ -388,8 +386,8 @@ class Control(inLib.Module):
         if self._zernFitUnwrappedModes is not None:
             print "ZernFitUnwrapped Modes: ", self._zernFitUnwrappedModes
             print "Radius for zernCalc: ", r
-            zernCalc = libtim.zern.calc_zernike(self._zernFitUnwrappedModes, r, mask=useMask)
-            
+#             zernCalc = libtim.zern.calc_zernike(self._zernFitUnwrappedModes, r, mask=useMask)
+            zernCalc = libtim.zern.calc_zernike(self._zernFitUnwrappedModes, r, mask = True)
             MOD = -1*zernCalc
             MOD = np.flipud(MOD)
             MOD = np.rot90(MOD)
@@ -402,12 +400,15 @@ class Control(inLib.Module):
             if self.hasSLM:
                 index = self._control.slm.addOther(newMOD)
             else:
+                # tried on 07/21
+#                 index = self._control.mirror.addOther(newMOD)
                 index = self._control.mirror.addOther(newMOD)
             self._modulations.append(index)
             return index
 
 
     def removePTTD(self):
+        # remove the first four Zernike modes
         p = self._PF.zernike_coefficients
         p[0:4] = 0
         self._PF.zernike_coefficients = p
@@ -428,7 +429,6 @@ class Control(inLib.Module):
 
         #geometry = self._control.slm.getGeometry()
         geometry = self._getGeo()
-
         if use_zernike:
             # The SLM vs camera image is flipped upside down. That's why we define a
             # flipped theta:
@@ -437,15 +437,13 @@ class Control(inLib.Module):
             #MOD = -zernike.basic_set(self._PF.zernike_coefficients, geometry.r, theta)
             if self._zernFitUnwrappedModes is not None:
                 print "ZernFitUnwrapped Modes: ", self._zernFitUnwrappedModes
-                print "Hello!"
-                    #print "Radius for zernCalc: ", r
-                zernCalc = libtim.zern.calc_zernike(self._zernFitUnwrappedModes,geometry.d/2.0,
+                zernCalc = libtim.zern.calc_zernike(self._zernFitUnwrappedModes,geometry.d/2.0, mask = True,
                                                zern_data ={})
                 MOD0=-1*zernCalc
 
             else:
                 print "not pre-fitted!"
-                MOD0 = -1*libtim.zern.calc_zernike(self._PF.zernike_coefficients, geometry.d/2.0,
+                MOD0 = -1*libtim.zern.calc_zernike(self._PF.zernike_coefficients, geometry.d/2.0, mask= False,
                                                zern_data ={})
             print "Using zernike to modulate. Radius of calculated mod: ", (geometry.d/2.0)
             np.save("testing_mod0.npy", MOD0)
@@ -488,37 +486,6 @@ class Control(inLib.Module):
         self._modulations.append(index)
         return index
 
-    def modulatePF_unwrapped(self):
-        #geometry = self._control.slm.getGeometry()
-        geometry = self._getGeo()
-        MOD = -1*self.unwrap()
-        MOD = np.flipud(MOD)
-        MOD = np.rot90(MOD)
-        cx,cy,d = geometry.cx, geometry.cy, geometry.d
-        # Diameter of phase retrieval output [pxl]:
-        dPhRt = (self._pupil.k_max/self._pupil.kx.max())*self._pupil.nx
-        # Zoom needed to fit onto SLM map:
-        zoom = d/dPhRt
-        MOD = interpolation.zoom(MOD,zoom,order=0,mode='nearest')
-        # Flip up down:
-        #MOD = np.flipud(MOD)
-        # Flip left right:
-        #MOD = np.fliplr(MOD)
-        #MOD = np.rot90(MOD)
-        MOD = np.rot90(-1.0*MOD) #Invert and rot90
-        # Shift center:
-        MOD = interpolation.shift(MOD,(cy-255.5,cx-255.5),order=0,
-                                                       mode='nearest')
-        # Cut out center 512x512:
-        c = MOD.shape[0]/2
-        MOD = MOD[c-256:c+256,c-256:c+256]
-
-        
-        # Add an 'Other' modulation using the SLM API. Store the index in _modulations:
-        #index = self._control.slm.addOther(MOD)
-        index = self._addMOD(MOD)
-        self._modulations.append(index)
-        return index
 
 
     def savePF(self, filename):
@@ -550,18 +517,6 @@ class Control(inLib.Module):
         #self._control.slm.setOtherActive(other_index, state)
         self._setOtherActive(other_index,state)
 
-    def resetZernAmpIndex(self):
-        self.currentZernAmpIndex = 0
-
-    def setZernAmps(self, zmin, zmax, num=100):
-        '''
-        Creats 1D array of Zernike amplitudes to apply.
-        RunningSharpness thread will advance through these
-        '''
-        self.zernAmps = np.linspace(zmax,zmin,num)
-
-    def getZernMinMax(self):
-        return self.zernAmpMin, self.zernAmpMax
 
     def getNumberOfZernToVary(self):
         if self.hasMirror:
@@ -572,21 +527,6 @@ class Control(inLib.Module):
             num = 0
         return num
 
-    def advanceModulation(self):
-        '''
-        In RunningSharpness thread this advances the next pattern
-        to be dispalyed on adaptive optics device
-        '''
-        if self.currentZernAmpIndex >= len(self.zernAmps):
-            self.currentZernAmpIndex = 0
-        coeff = self.zernAmps[self.currentZernAmpIndex]
-        if self.hasSLM:
-            self._control.slm.setZernikeModeFirstActive(coeff)
-            self._setZernModeFirstActive(coeff)
-        elif self.hasMirror:
-            self._control.mirror.advancePatternWithPipe()
-        self.currentZernAmpIndex += 1
-        return coeff
 
     def findSharpnessEachFrame(self, pixelSize, diffLimit, mask=None):
         frame_length = 1.0/self._control.camera.getFrameRate()
@@ -613,8 +553,8 @@ class _PupilFunction(object):
     A pupil function that keeps track when when either complex or amplitude/phase
     representation is changed.
     '''
-    def __init__(self, complex, geometry):
-        self.complex = complex
+    def __init__(self, cmplx, geometry):
+        self._complex = cmplx
         self._geometry = geometry
 
     @property
@@ -625,7 +565,7 @@ class _PupilFunction(object):
     def complex(self, new):
         self._complex = new
         self._amplitude = abs(new)
-        self._phase = np.angle(new)
+        self._phase = unwrap_phase(np.angle(new))
 
     @property
     def amplitude(self):
@@ -653,7 +593,7 @@ class _PupilFunction(object):
     def zernike_coefficients(self, new):
         self._zernike_coefficients = new
         #self._zernike = zernike.basic_set(new, self._geometry.r, self._geometry.theta)
-        self._zernike = libtim.zern.calc_zernike(new, self._geometry.nx/2.0)
+        self._zernike = libtim.zern.calc_zernike(new, self._geometry.nx/2.0, mask = True)
 
     @property
     def zernike(self):
