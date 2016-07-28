@@ -3,12 +3,9 @@
 
 from PyQt4 import QtGui,QtCore
 import inLib
-from Utilities import QExtensions as qext
+#from Utilities import QExtensions as qext
 import numpy as np
-from numpy.lib.scimath import sqrt as _msqrt
-import copy
-import time
-import skimage
+#from numpy.lib.scimath import sqrt as _msqrt
 
 """
 The required buttons:
@@ -61,6 +58,7 @@ class UI(inLib.DeviceUI):
         self._ui.lineEdit_npixels.setText(str(self._control.pixels))
         self._ui.lineEdit_zernAmp.setText("0")
         self._ui.lineEdit_premult.setText(str(self._control.preMultiplier))
+        self._ui.lineEdit_mult.setText(str(self._control.multiplier))
 
         self.pattern=None
         self._modulations = []         
@@ -155,11 +153,17 @@ class UI(inLib.DeviceUI):
     def addModulation(self):
         # updated on 07/21: use the lineEdit for each multiplier setting 
         mult = float(self._ui.lineEdit_mult.text())
-        self._control.push_to_pool(self._control.zernike, mult)
+        self._control.push_to_pool(mult)
         modulation = Modulation(len(self._modulations), self)
         self._ui.verticalLayoutModulations.insertWidget(0, modulation.checkbox)
         self._modulations.append(modulation)
         
+    def removeModulation(self, n=-1):
+        # added on 07/28: remove modulations from the modulationlist
+        # untested
+        modulation = self._modulations[n]
+        self._ui.verticalLayoutModulations.removeWidget(0, modulation.checkbox)
+        del(self._modulations[n])
         
 
     def syncMods(self):

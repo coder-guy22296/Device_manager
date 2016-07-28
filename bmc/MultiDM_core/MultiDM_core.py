@@ -5,9 +5,7 @@ import libtim
 import libtim.zern
 from modules.adaptiveOptics import pupil_forInControl as pupil
 import subprocess
-import scipy
 from scipy.ndimage import rotate
-from Cython.Compiler.ExprNodes import constant_value_not_set
 
 class Control(inLib.Device):
     def __init__(self, settings):
@@ -22,7 +20,7 @@ class Control(inLib.Device):
 
         self._geometry = self.mirror.geometry
         self.tempfilename = 'mirrorSegs.txt'
-        self.multiplier = 1.0
+        self.multiplier = -1.0
         self.preMultiplier = 80
         
         self.group = []
@@ -31,7 +29,7 @@ class Control(inLib.Device):
         
         #below is added by Dan 
         # have a stack of zernike modes
-        self.z_max = 25
+        self.z_max = 22
         self.zernike = np.zeros(self.z_max) # Initialize self.zernike 
         self.pool = Zernike_pool(self.z_max)
         
@@ -155,7 +153,7 @@ class Control(inLib.Device):
         self.mirror.clear()
 
     
-    def calcZernike_single(self, mode, amp, radius=None, useMask=True):
+    def calcZernike_single(self, mode, amp, radius=None, useMask=False):
         # this is for single Zernike
         if radius is None:
             radius = self.mirror.nPixels/2
@@ -165,7 +163,7 @@ class Control(inLib.Device):
                                                 zern_data = {})
         return self.mirror.pattern
     
-    def calcZernike_multi(self, amps, radius = None, useMask = True):
+    def calcZernike_multi(self, amps, radius = None, useMask = False):
         if radius is None:
             radius = self.mirror.nPixels/2
         self.mirror.pattern = libtim.zern.calc_zernike(amps,radius, mask = useMask, zern_data = {})
@@ -198,7 +196,8 @@ class Control(inLib.Device):
 
     def applyToMirror(self):
         #First save mirror
-        self.mirror.outputSegs(self.tempfilename)
+        # later I should add a function to change the file name
+        self.mirror.outputSegs(self.tempfilename) 
         #Wait to make sure file exists
         time.sleep(0.5)
         #Run executable
@@ -209,7 +208,7 @@ class Control(inLib.Device):
     def addOther(self, MOD):
         # Update by Dan on 07/14.
         idx = self.extern.ext_add(MOD)
-         
+        
         return idx
     
     # ------------------- everything of zernike mode modulation and pool operation---------------------
@@ -219,13 +218,11 @@ class Control(inLib.Device):
         # push a single mode into self.zernike
         self.zernike[nmode-1] = amp 
         print("added mode:", nmode, "amplitude:", amp)
-        
     
-    def push_to_pool(self, zm, multi):
+    def push_to_pool(self, multi):
         # added on 07/20: nmode is the zm, amp plays the multiplier's role
         # then clear self.zernike for the next group of modulation
-        idx = self.pool.append_mod(zm, multi)
-        print(self.zernike)
+        idx = self.pool.append_mod(self.zernike, multi)
         print(idx, "th modulation, multiplier:",  multi)
         self.zernike = np.zeros(self.z_max)
     
@@ -237,7 +234,6 @@ class Control(inLib.Device):
         
     def mod_from_pool(self):
         amps = self.pool.synth_mod()
-        print('amps:', amps)
         self.mirror.pattern = self.calcZernike_multi(amps)
         self.mirror.findSeg()
         # Up to here, the pattern is not added to the mirror yet.
@@ -250,7 +246,7 @@ class Zernike_pool(object):
     def __init__(self,z_max):
         self.multi_list = []
         self.z_max = z_max
-        self.zen_list = []
+        self.zen_list = {} # replaced the list with a dictionary
         self.z_store = 0
         self.z_active = []
     
@@ -258,15 +254,16 @@ class Zernike_pool(object):
         npad = self.z_max - len(zm)
         if npad>0:
             zmodes = np.lib.pad(zm,(0, npad), 'constant', constant_value = 0.)
+            print("The inserted mode:", zmodes)
         else:
             zmodes = zm[:self.z_max] 
-        self.zen_list.append(zmodes)
+        self.zen_list[self.z_store] = zmodes
         print(self.zen_list)
         self.multi_list.append(multi) 
         self.z_store +=1
         self.z_active.append(True)
+        print("Pool size:", self.z_store)
         return self.z_store
-        
         
     def delete_mod(self, ndel = -1):
         # by default: delete the last element 
@@ -284,7 +281,14 @@ class Zernike_pool(object):
         for nmod in n_active:
             z_coeff += self.multi_list[nmod]*self.zen_list[nmod]
         
+        print("The synthesized modes:", z_coeff)
         return z_coeff 
+        
+    def clear_all(self):
+        self.zen_list = {}
+        self.z_store = 0
+        self.multi_list = []
+        self.z_active = []
         """ 
         This is the final zernike modes scaled by all the multipliers. When applying to the mirror, there's no
         need to rescale it with
@@ -300,7 +304,7 @@ class Ext_pool():
     
     def ext_add(self, MOD):
         self.e_store +=1
-        self.ext[e_store] = MOD
+        self.ext[self.e_store] = MOD
         self.e_active.append(True)
         
         return self.e_store
@@ -388,6 +392,18 @@ class Mirror():
                 
                 av = np.mean(self.pattern[xStart:xEnd, yStart:yEnd])
                 self.segOffsets[ii,jj] = av
+                
+    # ------------------- this is a terribly written function  temporarily put back on 07/28-----------------------
+    def whereSegment(self, seg):
+        temp = np.zeros_like(self.pattern)
+        unraveled = np.unravel_index(seg, [self.nSegments, self.nSegments])
+        xStart = self.borders[unraveled[0]]
+        xStop = self.borders[unraveled[0]+1]
+        yStart = self.borders[unraveled[1]]
+        yStop = self.borders[unraveled[1]+1]
+        temp[xStart:xStop,yStart:yStop] = -1
+        return np.where(temp==-1)
+    # ----------------------Should be updated ASAP. -------------------------------
 
 
     def findTilt(self, tilt):

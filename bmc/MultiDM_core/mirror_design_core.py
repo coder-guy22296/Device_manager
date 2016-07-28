@@ -268,10 +268,10 @@ class Ui_Form(object):
         
         self.pushButton_modulateZernike = QtGui.QPushButton(self.tab_2)
         self.pushButton_modulateZernike.setGeometry(QtCore.QRect(20, 350, 75, 23))
-        self.pushButton_modulateZernike.setText(QtGui.QApplication.translate("Form", "Add Modulation", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButton_modulateZernike.setText(QtGui.QApplication.translate("Form", "Add to pool", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton_modulateZernike.setObjectName(_fromUtf8("pushButton_modulateZernike"))
         self.groupBox_3 = QtGui.QGroupBox(self.tab_2)
-        self.groupBox_3.setGeometry(QtCore.QRect(10, 370, 391, 151))
+        self.groupBox_3.setGeometry(QtCore.QRect(10, 380, 391, 151))
         self.groupBox_3.setTitle(QtGui.QApplication.translate("Form", "Add Zernike", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_3.setObjectName(_fromUtf8("groupBox_3"))
         self.label_6 = QtGui.QLabel(self.groupBox_3)
@@ -286,7 +286,7 @@ class Ui_Form(object):
         # 07/20: spinbox, amplitude and mask --- sealed 
         self.spinBox_zernMode = QtGui.QSpinBox(self.groupBox_3)
         self.spinBox_zernMode.setGeometry(QtCore.QRect(52, 48, 63, 19))
-        self.spinBox_zernMode.setMinimum(1)
+        self.spinBox_zernMode.setMinimum(5)
         self.spinBox_zernMode.setObjectName(_fromUtf8("spinBox_zernMode"))
         self.lineEdit_zernAmp = QtGui.QLineEdit(self.groupBox_3)
         self.lineEdit_zernAmp.setGeometry(QtCore.QRect(178, 48, 50, 19))
