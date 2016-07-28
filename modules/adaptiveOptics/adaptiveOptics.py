@@ -387,7 +387,7 @@ class Control(inLib.Module):
             print "ZernFitUnwrapped Modes: ", self._zernFitUnwrappedModes
             print "Radius for zernCalc: ", r
 #             zernCalc = libtim.zern.calc_zernike(self._zernFitUnwrappedModes, r, mask=useMask)
-            zernCalc = libtim.zern.calc_zernike(self._zernFitUnwrappedModes, r, mask = False)
+            zernCalc = libtim.zern.calc_zernike(self._zernFitUnwrappedModes, r, mask = True)
             MOD = -1*zernCalc
             MOD = np.flipud(MOD)
             MOD = np.rot90(MOD)
@@ -437,7 +437,7 @@ class Control(inLib.Module):
             #MOD = -zernike.basic_set(self._PF.zernike_coefficients, geometry.r, theta)
             if self._zernFitUnwrappedModes is not None:
                 print "ZernFitUnwrapped Modes: ", self._zernFitUnwrappedModes
-                zernCalc = libtim.zern.calc_zernike(self._zernFitUnwrappedModes,geometry.d/2.0, mask = False,
+                zernCalc = libtim.zern.calc_zernike(self._zernFitUnwrappedModes,geometry.d/2.0, mask = True,
                                                zern_data ={})
                 MOD0=-1*zernCalc
 
@@ -593,7 +593,7 @@ class _PupilFunction(object):
     def zernike_coefficients(self, new):
         self._zernike_coefficients = new
         #self._zernike = zernike.basic_set(new, self._geometry.r, self._geometry.theta)
-        self._zernike = libtim.zern.calc_zernike(new, self._geometry.nx/2.0, mask = False)
+        self._zernike = libtim.zern.calc_zernike(new, self._geometry.nx/2.0, mask = True)
 
     @property
     def zernike(self):

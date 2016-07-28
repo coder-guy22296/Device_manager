@@ -424,12 +424,20 @@ class Mirror():
         self.segOffsets = newSegs.reshape(12,12)
         #print "segOffsets: ", self.segOffsets
 
+    
+    def squarePat(self):
+        # Added on 07/27. Patting the 12 * 12 segments with the edge values
+        hpx = self.nPixels/2 # half of the Pixel number 
+        print(hpx)
+#         for dr in 
+        
+    
+    
+    
     def returnSegs(self):
         return self.segOffsets
 
-    def useSegements(self,segs):
-        self.segOffsets = segs.copy()
-
+    
 
 
         
