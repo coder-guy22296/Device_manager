@@ -114,6 +114,7 @@ class UI(inLib.DeviceUI):
         self._displayPhase(pattern)
 
     def getSegments(self):
+        self._control.findSegments()
         segments = self._control.returnSegments()
         self._displaySegments(segments)
 
@@ -166,7 +167,7 @@ class UI(inLib.DeviceUI):
 #        adapted from adaptiveOptics_ui
         for m in self._modulations:
             state = m.checkbox.isChecked()
-            self._control.setMod_status(m.index, state)
+            self._control.setMod_status(m.index, state) # something must be wrong here.
             
         self._control.mod_from_pool() # both pattern and segs are updated here
         self.refreshPattern() # display pattern
@@ -247,7 +248,8 @@ class UI(inLib.DeviceUI):
         self._ui.label_maxSeg.setText("Maximum: %.2f" % trueSegs.max())
         self._ui.label_minSeg.setText("Minimum: %.2f" % trueSegs.min())
 
-    
+    def _modulation_toggled(self):
+        pass
     
 
     def shutDown(self):

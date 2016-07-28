@@ -139,6 +139,9 @@ class Control(inLib.Device):
         self.preMultiplier = mult    
 
 
+    def findSegments(self):
+        self.mirror.findSeg()
+
     def returnSegments(self):
         return self.mirror.returnSegs()
         #return self.mirror.segOffsets
@@ -215,14 +218,15 @@ class Control(inLib.Device):
     def push_to_zernike(self, nmode, amp):
         # push a single mode into self.zernike
         self.zernike[nmode-1] = amp 
-        print("added mode:", nmode)
+        print("added mode:", nmode, "amplitude:", amp)
         
     
     def push_to_pool(self, zm, multi):
         # added on 07/20: nmode is the zm, amp plays the multiplier's role
         # then clear self.zernike for the next group of modulation
         idx = self.pool.append_mod(zm, multi)
-        print(idx, "th modulation, multiplier:",  multiplier)
+        print(self.zernike)
+        print(idx, "th modulation, multiplier:",  multi)
         self.zernike = np.zeros(self.z_max)
     
     
@@ -233,6 +237,7 @@ class Control(inLib.Device):
         
     def mod_from_pool(self):
         amps = self.pool.synth_mod()
+        print('amps:', amps)
         self.mirror.pattern = self.calcZernike_multi(amps)
         self.mirror.findSeg()
         # Up to here, the pattern is not added to the mirror yet.
@@ -256,6 +261,7 @@ class Zernike_pool(object):
         else:
             zmodes = zm[:self.z_max] 
         self.zen_list.append(zmodes)
+        print(self.zen_list)
         self.multi_list.append(multi) 
         self.z_store +=1
         self.z_active.append(True)
@@ -273,10 +279,11 @@ class Zernike_pool(object):
     def synth_mod(self):
         # find the Active modulations
         n_active = [i for i, s in enumerate(self.z_active) if s] # select all the True modes
+        print('Active modes:', n_active)
         z_coeff = np.zeros_like(self.zen_list[0], dtype='float')
         for nmod in n_active:
-            z_coeff += self.multi_list[nm]*self.zen_list[nm]
-            
+            z_coeff += self.multi_list[nmod]*self.zen_list[nmod]
+        
         return z_coeff 
         """ 
         This is the final zernike modes scaled by all the multipliers. When applying to the mirror, there's no
@@ -380,6 +387,7 @@ class Mirror():
                 yEnd = self.borders[jj+1]
                 
                 av = np.mean(self.pattern[xStart:xEnd, yStart:yEnd])
+                self.segOffsets[ii,jj] = av
 
 
     def findTilt(self, tilt):
