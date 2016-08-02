@@ -487,12 +487,12 @@ class Simulation(Pupil):
         upper = 0.5*(nz-1)*dz
         zs = _np.linspace(-upper,upper,nz) - z_offset
 
-	# Normalization for fft2:
-	N = _np.sqrt(self.nx*self.ny)
+	       # Normalization for fft2:
+        N = _np.sqrt(self.nx*self.ny)
 
-	if use_pyfftw:
+    	if use_pyfftw:
             pyfftw.interfaces.cache.enable()
-
+    
         Ue = _np.ones_like(PSF).astype(_np.complex128)
         U = _np.ones_like(PSF).astype(_np.complex128)
         Uconj = _np.ones_like(PSF).astype(_np.complex128)

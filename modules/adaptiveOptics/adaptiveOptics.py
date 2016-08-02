@@ -18,6 +18,10 @@ import signalForAO
 from skimage.restoration import unwrap_phase
 
 
+def gaussian(z, a, z0, w, b):
+    return a * np.exp(-(z-z0)**2/w) + b
+
+
 class Control(inLib.Module):
     
     def __init__(self, control, settings):
@@ -86,40 +90,6 @@ class Control(inLib.Module):
         if self.hasMirror:
             self._control.mirror.setOtherActive(other_index, state)
 
-    def acquireImagesVaryAO(self, nPatterns, nFrames,
-                            filename=None):
-        '''
-        Acquires a stack of images while varying the mirror in some way...
-        '''
-        
-        if self.hasMirror:
-            ao = self._control.mirror
-        elif self.hasSLM:
-            ao = self._control.slm
-        else:
-            return None
-        if not self.varyAOactive:
-            return None
-
-        dim = self._control.camera.getDimensions()
-        data = np.zeros((nSteps,) + dim)
-        slicesFrames = np.zeros((nFrames,)+dim)
-        
-        for i in xrange(nPatterns):
-            ao.advancePatternWithPipe()
-            for j in xrange(nFrames):
-                im = self._control.camera.getMostRecentImageNumpy()
-                if im is None:
-                    time.sleep(frame_length)
-                    im = self._control.camera.getMostRecentImageNumpy()
-                slicesFrames[j] = im
-                time.sleep(frame_length)
-            data[i] = np.mean(slicesFrames, axis=0)
-        if filename:
-            print "ao: Saving vary ao to ", filename
-            np.save(filename, data)
-        return data
-        
 
 
     def acquirePSF(self, range_, nSlices, nFrames, center_xy=True, filename=None,
@@ -212,6 +182,12 @@ class Control(inLib.Module):
     def retrievePF(self, dx, l, n, NA, f, guess, nIt, neglect_defocus=True,
                    invert=False, wavelengths=1, resetAmp=True,
                    symmeterize=False):
+        # 08/01: 
+        # To be changed: fit the gaussian profile prior to the phase retrieval; 
+        # Average the fitting between 5 adjacent columns. 
+        
+        
+        
         '''
         Retrieves the phase of the most recent PSF. The retrieved pupil function is both
         returned and stored internally.
@@ -255,23 +231,22 @@ class Control(inLib.Module):
             # The coordinates of the brightest pixel
             cz, cx, cy = np.unravel_index(self._PSF.argmax(), self._PSF.shape)
             # Intensity trace along z
-            i = self._PSF[:,cx,cy]
+            im_z = self._PSF[:,cx,cy]
             # Get z positions
             nz = self._PSF.shape[0]
             upper = 0.5*(nz-1)*self._dz
             z = np.linspace(-upper, upper, nz)
             # Initial fit parameters
-            b = np.mean((i[0],i[-1]))
-            a = i.max() - b
+            b = np.mean((im_z[0],im_z[-1]))
+            a = im_z.max() - b
             w = l/3.2
             p0 = (a,0,w,b)
-            def gaussian(z, a, z0, w, b):
-                return a * np.exp(-(z-z0)**2/w) + b
+            
             # Fit gaussian to axial intensity trace
-            popt, pcov = optimize.curve_fit(gaussian, z, i, p0)
+            popt, pcov = optimize.curve_fit(gaussian, z, im_z, p0)
             # Where we think the emitter is axially located:
-            z_offset = -1.0*popt[1] #Added on April 3, 2015
-            plt.plot(z, i)
+            z_offset = popt[1] # The original version is wrong
+            plt.plot(z, im_z)
             plt.plot(z, gaussian(z,*popt))
             plt.savefig('z_fit.png')
 
