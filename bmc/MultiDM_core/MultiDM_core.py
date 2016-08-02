@@ -308,6 +308,12 @@ class Ext_pool():
         self.e_active.append(True)
         
         return self.e_store
+    
+    def ext_del(self, idx = -1):
+        # delete a modulation
+        self.e_store -=1
+        del(self.ext[idx])
+        del(self.e_active[idx])
 
 
 
